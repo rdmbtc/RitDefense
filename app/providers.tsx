@@ -1,9 +1,9 @@
 "use client"
 
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useEffect, useState, useMemo } from "react"
 import { GameProvider } from "@/context/game-context"
 import { GuideProvider } from "@/context/guide-context"
-import { defineChain } from 'viem'
+import { defineChain, http } from 'viem'
 import { WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { injected } from 'wagmi/connectors'
@@ -23,7 +23,6 @@ const ritualTestnet = defineChain({
   rpcUrls: {
     default: {
       http: [process.env.NEXT_PUBLIC_RITUAL_RPC_URL ?? 'https://rpc.ritualfoundation.org'],
-      webSocket: [process.env.NEXT_PUBLIC_RITUAL_WS_URL ?? 'wss://rpc.ritualfoundation.org/ws'],
     },
   },
   blockExplorers: {
@@ -35,48 +34,54 @@ const ritualTestnet = defineChain({
   testnet: true,
 })
 
-// Wagmi config with Injected Connector (MetaMask, Rabby, etc.)
-const wagmiConfig = {
-  chains: [ritualTestnet],
-  connectors: [
-    injected({
-      target: 'metaMask',
-    }),
-  ],
-}
-
-// Create QueryClient instance
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 10, // 10 minutes
-    },
-  },
-})
-
 export function Providers({ children }: { children: ReactNode }) {
   const [hasInitialized, setHasInitialized] = useState(false)
 
-  // Add debug logging for context initialization
+  // Create client-side only QueryClient
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 10,
+      },
+    },
+  }))
+
+  // Create wagmi config client-side only
+  const wagmiConfig = useMemo(() => {
+    const chainWithTransport = defineChain({
+      ...ritualTestnet,
+      transports: {
+        [ritualTestnet.id]: http(),
+      },
+    });
+
+    return {
+      chains: [chainWithTransport],
+      connectors: [
+        injected({
+          target: 'metaMask',
+        }),
+      ],
+    };
+  }, [])
+
   useEffect(() => {
     if (!hasInitialized) {
       setHasInitialized(true)
       console.log("[Providers] Client-side providers initialized");
 
-      // Log configuration warnings in development
       if (process.env.NODE_ENV === 'development') {
         if (!process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID) {
-          console.warn('⚠️ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID is not set. WalletConnect features may not work properly.')
+          console.warn('⚠️ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID is not set.')
         }
         if (!process.env.NEXT_PUBLIC_RITUAL_RPC_URL) {
-          console.warn('⚠️ NEXT_PUBLIC_RITUAL_RPC_URL is not set. Using default RPC.')
+          console.warn('⚠️ NEXT_PUBLIC_RITUAL_RPC_URL is not set.')
         }
       }
     }
-  }, []); // Empty dependency array to prevent re-initialization
+  }, []);
 
-  // Client-side only configuration (SSR disabled)
   return (
     <ErrorBoundary>
       <NoSSRWrapper fallback={<div>Loading...</div>}>
