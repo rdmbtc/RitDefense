@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { useGameContext } from "@/context/game-context";
 import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
-import { useAccount, useConnectModal } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
+import { injected } from 'wagmi/connectors';
 import { useGameSession } from '@/hooks/useGameSession';
 import { usePlayerTotalScore } from '@/hooks/usePlayerTotalScore';
 import { useCrossAppAccount } from '@/hooks/useCrossAppAccount';
@@ -68,7 +69,7 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
   
   // Use custom hooks for API integration
   const { isConnected, address: walletAddress } = useAccount();
-  const { openConnectModal } = useConnectModal();
+  const { connect } = useConnect();
   const { data: usernameData, error: usernameError, isLoading: usernameLoading } = useUsername(walletAddress);
   const { data: playerStats } = usePlayerTotalScore(walletAddress, gameStarted, false);
 
@@ -147,7 +148,7 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
         sessionId: !!sessionId
       });
       toast.error('Please connect your wallet to submit scores!');
-      openConnectModal?.();
+      connect({ connector: injected() });
       return false;
     }
 
@@ -440,7 +441,7 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
               // Check authentication before skipping to game
               if (!isConnected || !walletAddress) {
                 toast.error('Please connect your wallet to play!');
-                openConnectModal?.();
+                connect({ connector: injected() });
                 return;
               }
               
@@ -556,7 +557,7 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
                 variant="outline"
                 size="sm"
                 className="bg-blue-600/80 hover:bg-blue-700/80 text-white border-blue-500/50"
-                onClick={() => openConnectModal?.()}
+                onClick={() => connect({ connector: injected() })}
               >
                 Connect Wallet
               </Button>
@@ -602,7 +603,7 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
               <h2 className="text-3xl font-bold mb-4">🛡️ Rit Defense</h2>
               <p className="text-lg mb-6">Connect your wallet to start playing!</p>
               <Button
-                onClick={() => openConnectModal?.()}
+                onClick={() => connect({ connector: injected() })}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg"
               >
                 Connect Wallet
