@@ -1,0 +1,92 @@
+<svg width="256" height="32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="rocketFire1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="20%" style="stop-color:#00aaff;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#0066ff;stop-opacity:0.8" />
+      <stop offset="80%" style="stop-color:#003399;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#001166;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="rocketFire2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#88ddff;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#0088ff;stop-opacity:0.9" />
+      <stop offset="70%" style="stop-color:#0044aa;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#002255;stop-opacity:0.4" />
+    </radialGradient>
+    <radialGradient id="rocketTrail" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#aaeeff;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#4499dd;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#2266aa;stop-opacity:0.3" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Frame 0: Small rocket fire -->
+  <g>
+    <ellipse cx="16" cy="16" rx="8" ry="12" fill="url(#rocketFire1)" />
+    <ellipse cx="14" cy="14" rx="4" ry="8" fill="url(#rocketFire2)" />
+    <ellipse cx="18" cy="18" rx="3" ry="6" fill="url(#rocketTrail)" />
+  </g>
+  
+  <!-- Frame 1: Growing rocket fire -->
+  <g>
+    <ellipse cx="48" cy="16" rx="10" ry="14" fill="url(#rocketFire1)" />
+    <ellipse cx="46" cy="14" rx="5" ry="10" fill="url(#rocketFire2)" />
+    <ellipse cx="50" cy="18" rx="4" ry="8" fill="url(#rocketTrail)" />
+    <ellipse cx="48" cy="20" rx="2" ry="4" fill="url(#rocketTrail)" />
+  </g>
+  
+  <!-- Frame 2: Medium rocket fire -->
+  <g>
+    <ellipse cx="80" cy="16" rx="12" ry="15" fill="url(#rocketFire1)" />
+    <ellipse cx="78" cy="14" rx="6" ry="11" fill="url(#rocketFire2)" />
+    <ellipse cx="82" cy="18" rx="5" ry="9" fill="url(#rocketTrail)" />
+    <ellipse cx="80" cy="20" rx="3" ry="5" fill="url(#rocketTrail)" />
+    <ellipse cx="84" cy="12" rx="2" ry="3" fill="url(#rocketTrail)" />
+  </g>
+  
+  <!-- Frame 3: Large rocket fire -->
+  <g>
+    <ellipse cx="112" cy="16" rx="14" ry="16" fill="url(#rocketFire1)" />
+    <ellipse cx="110" cy="14" rx="7" ry="12" fill="url(#rocketFire2)" />
+    <ellipse cx="114" cy="18" rx="6" ry="10" fill="url(#rocketTrail)" />
+    <ellipse cx="112" cy="20" rx="4" ry="6" fill="url(#rocketTrail)" />
+    <ellipse cx="116" cy="12" rx="3" ry="4" fill="url(#rocketTrail)" />
+    <ellipse cx="108" cy="18" rx="2" ry="3" fill="url(#rocketTrail)" />
+  </g>
+  
+  <!-- Frame 4: Peak rocket fire -->
+  <g>
+    <ellipse cx="144" cy="16" rx="15" ry="16" fill="url(#rocketFire1)" />
+    <ellipse cx="142" cy="14" rx="8" ry="12" fill="url(#rocketFire2)" />
+    <ellipse cx="146" cy="18" rx="7" ry="10" fill="url(#rocketTrail)" />
+    <ellipse cx="144" cy="20" rx="5" ry="6" fill="url(#rocketTrail)" />
+    <ellipse cx="148" cy="12" rx="4" ry="4" fill="url(#rocketTrail)" />
+    <ellipse cx="140" cy="18" rx="3" ry="3" fill="url(#rocketTrail)" />
+    <ellipse cx="150" cy="16" rx="2" ry="2" fill="url(#rocketTrail)" />
+  </g>
+  
+  <!-- Frame 5: Fading rocket fire -->
+  <g>
+    <ellipse cx="176" cy="16" rx="12" ry="14" fill="url(#rocketFire1)" opacity="0.8" />
+    <ellipse cx="174" cy="14" rx="6" ry="10" fill="url(#rocketFire2)" opacity="0.7" />
+    <ellipse cx="178" cy="18" rx="5" ry="8" fill="url(#rocketTrail)" opacity="0.6" />
+    <ellipse cx="176" cy="20" rx="3" ry="4" fill="url(#rocketTrail)" opacity="0.5" />
+    <ellipse cx="180" cy="12" rx="2" ry="3" fill="url(#rocketTrail)" opacity="0.4" />
+  </g>
+  
+  <!-- Frame 6: Small rocket fire -->
+  <g>
+    <ellipse cx="208" cy="16" rx="9" ry="12" fill="url(#rocketFire1)" opacity="0.6" />
+    <ellipse cx="206" cy="14" rx="4" ry="8" fill="url(#rocketFire2)" opacity="0.5" />
+    <ellipse cx="210" cy="18" rx="3" ry="6" fill="url(#rocketTrail)" opacity="0.4" />
+    <ellipse cx="208" cy="20" rx="2" ry="3" fill="url(#rocketTrail)" opacity="0.3" />
+  </g>
+  
+  <!-- Frame 7: Dying rocket trail -->
+  <g>
+    <ellipse cx="240" cy="16" rx="6" ry="8" fill="url(#rocketFire1)" opacity="0.4" />
+    <ellipse cx="238" cy="14" rx="3" ry="5" fill="url(#rocketFire2)" opacity="0.3" />
+    <ellipse cx="242" cy="18" rx="2" ry="4" fill="url(#rocketTrail)" opacity="0.2" />
+    <ellipse cx="240" cy="19" rx="1" ry="2" fill="url(#rocketTrail)" opacity="0.1" />
+  </g>
+</svg>
