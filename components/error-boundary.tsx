@@ -62,13 +62,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 <li>Browser compatibility issues</li>
               </ul>
               
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {this.state.error && (
                 <details className="mt-4">
                   <summary className="text-sm text-gray-400 cursor-pointer">
-                    Error Details (Development)
+                    Error Details
                   </summary>
-                  <pre className="mt-2 text-xs bg-gray-800 p-2 rounded overflow-auto max-h-32">
-                    {this.state.error.toString()}
+                  <pre className="mt-2 text-xs bg-gray-800 p-2 rounded overflow-auto max-h-64 text-red-300">
+                    {this.state.error.message}
+                    {this.state.error.stack && `\n\nStack Trace:\n${this.state.error.stack}`}
                   </pre>
                 </details>
               )}

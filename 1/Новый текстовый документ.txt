@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rit Defense</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Press Start 2P', cursive; }
+    html, body { height: 100%; margin: 0; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px #4ade80, 0 0 40px #16a34a; }
+      50% { box-shadow: 0 0 30px #4ade80, 0 0 60px #16a34a, 0 0 80px #166534; }
+    }
+    @keyframes button-glow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(255,255,255,0.3)); }
+      50% { filter: drop-shadow(0 0 16px rgba(255,255,255,0.6)); }
+    }
+    @keyframes button-shine {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    @keyframes sway {
+      0%, 100% { transform: rotate(-3deg); }
+      50% { transform: rotate(3deg); }
+    }
+    @keyframes monster-bob {
+      0%, 100% { transform: translateY(0) scaleX(-1); }
+      50% { transform: translateY(-5px) scaleX(-1); }
+    }
+    @keyframes sparkle {
+      0%, 100% { opacity: 0.3; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+    @keyframes slide-in {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-1200px); }
+    }
+    @keyframes float-cloud {
+      0% { transform: translateX(-400px); }
+      100% { transform: translateX(1400px); }
+    }
+    @keyframes rain-fall {
+      0% { transform: translateY(-100px); opacity: 1; }
+      100% { transform: translateY(600px); opacity: 0; }
+    }
+    @keyframes snow-fall {
+      0% { transform: translateY(-100px) translateX(0); opacity: 1; }
+      100% { transform: translateY(600px) translateX(30px); opacity: 0; }
+    }
+    @keyframes day-night-cycle {
+      0% { background: linear-gradient(180deg, #0f0620 0%, #1a0c35 20%, #2d1b4e 40%); }
+      10% { background: linear-gradient(180deg, #1a0c35 0%, #2d1b4e 20%, #3d2559 40%); }
+      20% { background: linear-gradient(180deg, #2d1b4e 0%, #4a2d6e 20%, #5a3d7e 40%); }
+      30% { background: linear-gradient(180deg, #5a6b8f 0%, #7b9bbf 20%, #9bbcef 40%); }
+      40% { background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 20%, #FFE4B5 40%); }
+      50% { background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 20%, #FFE4B5 40%); }
+      60% { background: linear-gradient(180deg, #7b6f8f 0%, #9b8fbf 20%, #bbadef 40%); }
+      70% { background: linear-gradient(180deg, #4a3d6e 0%, #5a4d7e 20%, #3a2d5e 40%); }
+      80% { background: linear-gradient(180deg, #2d1b4e 0%, #1a0c35 20%, #0f0620 40%); }
+      90% { background: linear-gradient(180deg, #1a0c35 0%, #0f0620 20%, #0a0415 40%); }
+      100% { background: linear-gradient(180deg, #0f0620 0%, #1a0c35 20%, #2d1b4e 40%); }
+    }
+
+    .menu-btn {
+      image-rendering: pixelated;
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #000, inset 0 0 0 2px rgba(255,255,255,0.2);
+      animation: slide-in 0.5s ease-out both;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .pixel-border {
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0px #000, inset 0 0 0 2px rgba(255,255,255,0.1);
+    }
+
+    .grass-tile {
+      background: repeating-linear-gradient(90deg, #2d8a4e 0px, #2d8a4e 32px, #248c45 32px, #248c45 64px);
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app" class="h-full w-full relative overflow-hidden" style="background: #0f0620; animation: day-night-cycle 40s steps(10, end) infinite;"><!-- Sky background -->
+   <div class="absolute inset-0 pointer-events-none" style="animation: day-night-cycle 40s steps(10, end) infinite;"></div><!-- Stars -->
+   <div class="absolute inset-0 pointer-events-none" id="stars"></div><!-- Rain Layer -->
+   <div class="absolute inset-0 pointer-events-none" id="rain-layer"></div><!-- Snow Layer -->
+   <div class="absolute inset-0 pointer-events-none" id="snow-layer"></div><!-- Moon -->
+   <div class="absolute top-12 right-16 w-24 h-24 rounded-full pointer-events-none" style="background: radial-gradient(circle at 35% 35%, #fffacd, #ffd700); box-shadow: 0 0 60px #ffd700, 0 0 120px #ffaa00, inset -4px -4px 0px rgba(0,0,0,0.3); filter: drop-shadow(6px 6px 0px rgba(0,0,0,0.4));"></div><!-- Parallax Layer 1 - Far Mountains -->
+   <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 35%; background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1200 300%22><defs><linearGradient id=%22m1%22 x1=%220%25%22 y1=%220%25%22 x2=%220%25%22 y2=%22100%25%22><stop offset=%220%25%22 stop-color=%22%231a0c35%22/><stop offset=%22100%25%22 stop-color=%22%231a1a2e%22/></linearGradient></defs><polygon points=%220,200 150,80 300,200 450,60 600,200 750,90 900,200 1050,70 1200,200 1200,300 0,300%22 fill=%22url(%23m1)%22/></svg>') repeat-x; background-size: 1200px 100%; animation: scroll 60s linear infinite;"></div><!-- Parallax Layer 2 - Mid Mountains -->
+   <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 32%; background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1000 280%22><defs><linearGradient id=%22m2%22 x1=%220%25%22 y1=%220%25%22 x2=%220%25%22 y2=%22100%25%22><stop offset=%220%25%22 stop-color=%22%232d1b4e%22/><stop offset=%22100%25%22 stop-color=%22%232d1b4e%22/></linearGradient></defs><polygon points=%220,180 120,100 240,180 360,50 480,180 600,120 720,180 840,80 1000,180 1000,280 0,280%22 fill=%22url(%23m2)%22/></svg>') repeat-x; background-size: 1000px 100%; animation: scroll 45s linear infinite -5s; opacity: 0.7;"></div><!-- Parallax Layer 3 - Closer Hills -->
+   <div class="absolute bottom-0 left-0 right-0 pointer-events-none" style="height: 28%; background: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 800 250%22><defs><linearGradient id=%22m3%22 x1=%220%25%22 y1=%220%25%22 x2=%220%25%22 y2=%22100%25%22><stop offset=%220%25%22 stop-color=%22%234a2d6e%22/><stop offset=%22100%25%22 stop-color=%22%233d2559%22/></linearGradient></defs><polygon points=%220,150 100,80 200,150 300,70 400,150 500,100 600,150 700,90 800,150 800,250 0,250%22 fill=%22url(%23m3)%22/></svg>') repeat-x; background-size: 800px 100%; animation: scroll 30s linear infinite -10s;"></div><!-- Animated Clouds -->
+   <div class="absolute top-12 left-0 w-40 h-16 pointer-events-none" style="animation: float-cloud 20s linear infinite;">
+    <svg viewbox="0 0 100 40" fill="none"><path d="M 20 30 Q 10 20 15 10 Q 20 5 25 10 Q 30 0 40 5 Q 50 5 50 15 Q 60 10 65 20 Q 60 35 45 35 Q 30 38 20 30" fill="#2d1b4e" opacity="0.6" stroke="#4a2d6e" stroke-width="1.5" />
+    </svg>
+   </div>
+   <div class="absolute top-24 right-20 w-48 h-20 pointer-events-none" style="animation: float-cloud 25s linear infinite -8s;">
+    <svg viewbox="0 0 120 50" fill="none"><path d="M 25 35 Q 12 22 18 8 Q 25 2 32 8 Q 40 0 55 5 Q 70 5 70 18 Q 85 12 92 28 Q 85 45 65 45 Q 40 50 25 35" fill="#1a0c35" opacity="0.5" stroke="#3d2559" stroke-width="1.5" />
+    </svg>
+   </div>
+   <div class="absolute top-32 left-1/4 w-36 h-14 pointer-events-none" style="animation: float-cloud 22s linear infinite -15s;">
+    <svg viewbox="0 0 90 35" fill="none"><path d="M 18 26 Q 8 16 12 6 Q 18 2 23 6 Q 30 0 42 3 Q 55 3 55 13 Q 68 8 73 22 Q 66 32 50 32 Q 28 35 18 26" fill="#2d1b4e" opacity="0.4" stroke="#4a2d6e" stroke-width="1" />
+    </svg>
+   </div><!-- Main Content - Fixed Positioning -->
+   <div class="fixed inset-0 z-10 flex flex-col items-center justify-center px-4 py-8 pointer-events-none">
+    <div class="pointer-events-auto"><!-- Title -->
+     <div class="mb-2 text-center" style="animation: float 3s ease-in-out infinite;">
+      <h1 id="game-title" class="text-2xl md:text-4xl text-green-300 mb-2 leading-relaxed" style="text-shadow: 3px 3px 0px #000, 0 0 20px #4ade80;">RIT<br>
+        DEFENSE</h1>
+      <p id="game-subtitle" class="text-xs md:text-sm text-yellow-300" style="text-shadow: 2px 2px 0px #000;">DEFEND YOUR GARDEN!</p>
+     </div><!-- Menu Buttons -->
+     <div class="flex flex-col gap-4 mt-8 w-full max-w-xs"><button class="menu-btn bg-gradient-to-b from-green-400 to-green-700 hover:from-green-300 hover:to-green-600 text-white py-4 px-6 text-xs md:text-sm text-center" style="animation-delay: 0.1s;" onclick="showScreen('survival')"> ⚔️ SURVIVAL </button> <button class="menu-btn bg-gradient-to-b from-cyan-400 to-blue-700 hover:from-cyan-300 hover:to-blue-600 text-white py-4 px-6 text-xs md:text-sm text-center" style="animation-delay: 0.2s;" onclick="showScreen('guide')"> 📖 GUIDE </button> <button class="menu-btn bg-gradient-to-b from-violet-400 to-purple-700 hover:from-violet-300 hover:to-purple-600 text-white py-4 px-6 text-xs md:text-sm text-center" style="animation-delay: 0.3s;" onclick="showScreen('options')"> ⚙️ OPTIONS </button>
+     </div>
+     <p class="mt-6 text-[9px] text-pink-300" style="text-shadow: 1px 1px 0 #000;">✨ Special For Ritual Community ✨</p><!-- Version -->
+     <p class="mt-4 text-[8px] text-green-200 opacity-75"><a href="https://twitter.com/rdmnad" target="_blank" rel="noopener noreferrer" style="color: #86efac; text-decoration: none;">@rdmnad</a> • v1.0.0</p>
+    </div>
+   </div><!-- Screens -->
+   <div id="screen-overlay" class="absolute inset-0 z-50 hidden items-center justify-center p-4" style="background: rgba(0,0,0,0.85);">
+    <div class="pixel-border bg-gray-900 p-6 max-w-sm w-full text-center">
+     <h2 id="screen-title" class="text-lg text-green-300 mb-4" style="text-shadow: 2px 2px 0 #000;"></h2>
+     <p id="screen-desc" class="text-[10px] text-gray-300 mb-6 leading-relaxed"></p><button class="menu-btn bg-red-700 hover:bg-red-600 text-white py-3 px-6 text-[10px]" onclick="hideScreen()"> ✖ BACK </button>
+    </div>
+   </div><!-- Ground -->
+   <div class="absolute bottom-0 left-0 right-0 h-16 grass-tile border-t-4 border-green-900"></div>
+   <script>
+    // Stars
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 40; i++) {
+      const star = document.createElement('div');
+      star.className = 'absolute rounded-full bg-white';
+      const size = Math.random() * 3 + 1;
+      star.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*50}%;left:${Math.random()*100}%;animation:sparkle ${2+Math.random()*3}s ease-in-out infinite ${Math.random()*2}s;`;
+      starsEl.appendChild(star);
+    }
+
+    // Rain effect
+    function createRain() {
+      const rainLayer = document.getElementById('rain-layer');
+      rainLayer.innerHTML = '';
+      for (let i = 0; i < 50; i++) {
+        const raindrop = document.createElement('div');
+        raindrop.style.cssText = `position:absolute;width:2px;height:15px;background:#4dc9ff;left:${Math.random()*100}%;top:${Math.random()*100}%;animation:rain-fall ${0.6+Math.random()*0.4}s linear infinite;animation-delay:${Math.random()*0.6}s;opacity:0.7;`;
+        rainLayer.appendChild(raindrop);
+      }
+    }
+
+    // Snow effect
+    function createSnow() {
+      const snowLayer = document.getElementById('snow-layer');
+      snowLayer.innerHTML = '';
+      for (let i = 0; i < 40; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.style.cssText = `position:absolute;width:${6+Math.random()*4}px;height:${6+Math.random()*4}px;background:#ffffff;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;animation:snow-fall ${2+Math.random()*1.5}s linear infinite;animation-delay:${Math.random()*2}s;opacity:0.8;box-shadow:0 0 10px rgba(255,255,255,0.8);`;
+        snowLayer.appendChild(snowflake);
+      }
+    }
+
+    // Automatic weather cycle tied to day/night
+    let weatherMode = 'none';
+    
+    function updateWeatherWithTime() {
+      // Cycle: 0-10% night, 10-20% pre-dawn, 20-30% sunrise, 30-50% day, 50-60% sunset, 60-80% dusk, 80-100% night
+      const now = new Date();
+      const totalMS = 40000; // 40 second cycle
+      const cycleMS = (now.getTime() % totalMS);
+      const percent = (cycleMS / totalMS) * 100;
+      
+      let newWeather = 'none';
+      
+      // Sunrise (20-30%): light rain
+      if (percent >= 20 && percent < 30) {
+        newWeather = 'rain';
+      }
+      // Sunset (50-60%): heavier rain
+      else if (percent >= 50 && percent < 60) {
+        newWeather = 'rain';
+      }
+      // Night (80-100% and 0-10%): snow
+      else if (percent >= 80 || percent < 10) {
+        newWeather = 'snow';
+      }
+      
+      // Update weather if it changed
+      if (newWeather !== weatherMode) {
+        weatherMode = newWeather;
+        if (weatherMode === 'rain') {
+          createRain();
+          document.getElementById('snow-layer').innerHTML = '';
+        } else if (weatherMode === 'snow') {
+          createSnow();
+          document.getElementById('rain-layer').innerHTML = '';
+        } else {
+          document.getElementById('rain-layer').innerHTML = '';
+          document.getElementById('snow-layer').innerHTML = '';
+        }
+      }
+      
+      // Keep checking for weather updates
+      requestAnimationFrame(updateWeatherWithTime);
+    }
+    
+    // Start automatic weather cycle
+    updateWeatherWithTime();
+    
+    // Manual toggle with keyboard (override automatic)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'r' || e.key === 'R') {
+        weatherMode = weatherMode === 'rain' ? 'manual-none' : 'rain';
+        if (weatherMode === 'rain') createRain();
+        else document.getElementById('rain-layer').innerHTML = '';
+      }
+      if (e.key === 's' || e.key === 'S') {
+        weatherMode = weatherMode === 'snow' ? 'manual-none' : 'snow';
+        if (weatherMode === 'snow') createSnow();
+        else document.getElementById('snow-layer').innerHTML = '';
+      }
+    });
+
+    const screens = {
+      survival: { title: '⚔️ SURVIVAL MODE', desc: 'Journey through 50 levels of monster-filled gardens. Plant your defenses and survive the night!' },
+      guide: { title: '📖 GUIDE', desc: 'Master your garden! Learn combat tactics, plant strategies, discover all 30 plants and 25 monsters!' },
+      options: { title: '⚙️ OPTIONS', desc: 'Sound: ON | Music: 80% | Volume: 100% | Difficulty: NORMAL | Screen Shake: ON' }
+    };
+
+    function showScreen(key) {
+      const overlay = document.getElementById('screen-overlay');
+      document.getElementById('screen-title').textContent = screens[key].title;
+      document.getElementById('screen-desc').textContent = screens[key].desc;
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+    }
+
+    function hideScreen() {
+      const overlay = document.getElementById('screen-overlay');
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+    }
+
+    // Element SDK
+    const defaultConfig = {
+      game_title: 'RIT\nDEFENSE',
+      subtitle: 'DEFEND YOUR GARDEN!',
+      background_color: '#1a0533',
+      surface_color: '#111827',
+      text_color: '#86efac',
+      primary_action_color: '#16a34a',
+      secondary_action_color: '#7e22ce',
+      font_family: 'Press Start 2P',
+      font_size: 14
+    };
+
+    function applyConfig(config) {
+      const title = document.getElementById('game-title');
+      const subtitle = document.getElementById('game-subtitle');
+      title.innerHTML = (config.game_title || defaultConfig.game_title).replace(/\n/g, '<br>');
+      subtitle.textContent = config.subtitle || defaultConfig.subtitle;
+      title.style.color = config.text_color || defaultConfig.text_color;
+      title.style.fontFamily = `${config.font_family || defaultConfig.font_family}, cursive`;
+      subtitle.style.fontFamily = `${config.font_family || defaultConfig.font_family}, cursive`;
+      const base = config.font_size || defaultConfig.font_size;
+      title.style.fontSize = `${base * 2}px`;
+      subtitle.style.fontSize = `${base * 0.8}px`;
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => applyConfig(config),
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+          { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+          { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+          { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+        ],
+        borderables: [],
+        fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+        fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['game_title', config.game_title || defaultConfig.game_title],
+        ['subtitle', config.subtitle || defaultConfig.subtitle]
+      ])
+    });
+
+    lucide.createIcons();
+  </script>
+  </div>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fb19e0eb1e0f057',t:'MTc3ODY3NDgyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

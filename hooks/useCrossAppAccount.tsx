@@ -1,13 +1,12 @@
 "use client";
 
-import { useAccount } from 'wagmi';
+import { useWallet } from '@/components/client-providers';
 
 export function useCrossAppAccount() {
-  const { address, isConnected, chain } = useAccount();
+  const { address, connected } = useWallet();
 
   return {
     walletAddress: address,
-    isAuthenticated: isConnected,
-    chain: chain,
+    isAuthenticated: connected,
   };
 }

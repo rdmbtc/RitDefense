@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useAccount } from 'wagmi';
+import { useWallet } from '@/components/client-providers';
 
 interface AuthState {
   isAuthenticating: boolean;
@@ -14,7 +14,7 @@ interface UseAuthReturn extends AuthState {
 }
 
 export function useAuth(): UseAuthReturn {
-  const { address } = useAccount();
+  const { address } = useWallet();
   const [state, setState] = useState<AuthState>({
     isAuthenticating: false,
     sessionToken: null,
@@ -36,19 +36,16 @@ export function useAuth(): UseAuthReturn {
     try {
       setState(prev => ({ ...prev, isAuthenticating: true, error: null }));
 
-      // Check if we have a valid cached session token
       if (isSessionValid(playerAddress)) {
         const cachedToken = localStorage.getItem(`session_${playerAddress}`)!;
         setState(prev => ({ ...prev, sessionToken: cachedToken, isAuthenticating: false }));
         return cachedToken;
       }
 
-      // Check if wallet is connected
       if (!address) {
         throw new Error('Please connect your wallet first');
       }
 
-      // TODO: Implement proper wallet-based authentication for Ritual
       throw new Error('Authentication not yet implemented - connect wallet and try again');
 
     } catch (error) {
@@ -69,7 +66,6 @@ export function useAuth(): UseAuthReturn {
       error: null
     });
 
-    // Clear all cached sessions
     const keys = Object.keys(localStorage);
     keys.forEach(key => {
       if (key.startsWith('session_')) {
