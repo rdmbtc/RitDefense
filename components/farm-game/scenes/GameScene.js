@@ -555,9 +555,8 @@ if (isBrowser) {
             
             // Created enemy path
             
-            // Visualize the path for debugging
-            this.visualizePath();
-            
+            // Visualize the path for debugging (DISABLED in production)
+            // this.visualizePath();            
             // Create dynamic textures for fireballs if they don't exist
             if (!this.textures.exists('fireball_red')) {
               try {

@@ -603,7 +603,7 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
 
   return (
     <div 
-      className="min-h-screen"
+      className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 md:p-8"
       style={{
         backgroundImage: 'url(/BG/background_menu.jpg)',
         backgroundSize: 'cover',
@@ -611,180 +611,157 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      {/* Header with back button and game info */}
-      <div className="absolute top-4 left-4 z-50">
+      {/* Dark overlay for the entire background to improve contrast */}
+      <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+
+      {/* Header with back button and wallet */}
+      <div className="absolute top-4 left-4 z-50 flex items-center gap-4">
         <Button 
           onClick={handleBackToMenu}
           variant="outline"
-          className="bg-white/10 backdrop-blur border-white/20 text-white hover:bg-white/20"
+          className="bg-black/60 backdrop-blur-md border-white/20 text-white hover:bg-white/20"
         >
-          ← Back to Menu
+          ← Back
         </Button>
       </div>
       
       <div className="absolute top-4 right-4 z-50 flex gap-4 items-center">
-        {/* Authentication Status */}
-        <div className="bg-white/10 backdrop-blur border-white/20 rounded-lg px-4 py-2">
+        {/* Wallet Display with Plate */}
+        <div className="bg-black/60 backdrop-blur-md border border-white/20 rounded-full px-4 py-1.5 flex items-center gap-2 shadow-lg">
+          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
           {!isConnected ? (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-blue-600/80 hover:bg-blue-700/80 text-white border-blue-500/50"
-                onClick={() => connect()}
-              >
-                Connect Wallet
-              </Button>
-            </div>
+            <button
+              className="text-white text-xs font-medium hover:text-green-400 transition-colors"
+              onClick={() => connect()}
+            >
+              Connect Wallet
+            </button>
           ) : (
-            <div className="flex items-center gap-2">
-              {walletAddress ? (
-                <span className="text-white text-sm">{walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}</span>
-              ) : (
-                <span className="text-white text-sm">Connected</span>
-              )}
+            <span className="text-white text-xs font-mono font-medium">
+              {walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : 'Connected'}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Main Game Board Container */}
+      <div className="relative z-10 w-full max-w-5xl aspect-[4/3] md:aspect-auto md:h-[85vh] bg-black/20 backdrop-blur-sm rounded-2xl border-4 border-white/10 shadow-2xl overflow-hidden flex flex-col">
+        
+        {/* Top Info Bar (Inside Game Board) */}
+        <div className="flex justify-between items-center p-4 bg-black/60 border-b border-white/10 backdrop-blur-md">
+          <h1 className="text-xl md:text-2xl font-bold text-white tracking-wider" style={{textShadow: '0 0 10px rgba(255,255,255,0.3)'}}>
+            {GAME_CONFIG.METADATA.name.toUpperCase()}
+          </h1>
+          
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Current Score</span>
+              <span className="text-xl font-bold text-yellow-400">
+                {gameScore.toLocaleString()}
+              </span>
+            </div>
+            
+            <div className="flex flex-col items-end border-l border-white/10 pl-6">
+              <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Farm Coins</span>
+              <span className="text-xl font-bold text-green-400 flex items-center gap-2">
+                🪙 {farmCoins.toLocaleString()}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Phaser Game Surface */}
+        <div className="flex-1 relative bg-black/40">
+          {!isConnected || !walletAddress ? (
+            <div className="absolute inset-0 flex items-center justify-center text-center text-white p-8">
+              <div className="max-w-md bg-black/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 shadow-2xl">
+                <h2 className="text-4xl font-bold mb-6 tracking-tight">🛡️ RIT DEFENSE</h2>
+                <p className="text-white/60 mb-8 text-lg leading-relaxed">The garden is under attack. Connect your wallet to summon your defenders and earn rewards.</p>
+                <Button
+                  onClick={() => connect()}
+                  className="bg-white text-black hover:bg-white/90 px-10 py-6 text-xl font-bold rounded-full transition-transform active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                >
+                  Connect to Play
+                </Button>
+              </div>
+            </div>
+          ) : gameMode === 'game' && gameStarted ? (
+            <ClientWrapper 
+              key="defense-game-instance"
+              farmCoins={farmCoins}
+              addFarmCoins={addFarmCoins}
+              gameMode="defense"
+              onGameEvent={(event: string, data: any) => {
+                // ... event handler logic stays same
+                switch (event) {
+                  case 'coinsEarned':
+                    if (data && typeof data === 'number') addFarmCoins(data);
+                    break;
+                  case 'enemyDefeated':
+                    if (skillTreeManagerRef.current) window.dispatchEvent(new CustomEvent('enemyDefeated', { detail: { score: gameScore } }));
+                    break;
+                  case 'waveComplete':
+                    if (data && typeof data === 'object' && data.wave && data.score) {
+                      setGameScore(data.score);
+                      toast.success(`Wave ${data.wave} completed!`);
+                    }
+                    break;
+                  case 'scoreUpdate':
+                    if (data && typeof data === 'number') {
+                      setGameScore(data);
+                      if (skillTreeManagerRef.current) window.dispatchEvent(new CustomEvent('scoreUpdate', { detail: { score: data } }));
+                    }
+                    break;
+                  case 'gameOver':
+                    toast.success('Game Over! Thanks for playing!');
+                    if (onGameEnd && gameScore > 0) onGameEnd(gameScore);
+                    break;
+                  case 'gameWon':
+                    const victoryBonus = 5000;
+                    const finalScore = gameScore + victoryBonus;
+                    setGameScore(finalScore);
+                    toast.success(`Victory! +${victoryBonus} victory bonus!`);
+                    if (onGameEnd) onGameEnd(finalScore);
+                    break;
+                  default: break;
+                }
+              }}
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-white text-center flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                <div className="text-sm font-bold tracking-[0.2em] text-white/50 uppercase">Initializing Engine</div>
+              </div>
             </div>
           )}
         </div>
-        
-        {/* Score Display */}
-        <div className="relative">
-          <div className="bg-white/10 backdrop-blur border-white/20 rounded-lg px-4 py-2">
-            <span className="text-white font-bold" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.7)'}}>
-              Score: {gameScore > 0 ? gameScore.toLocaleString() : '0'}
+
+        {/* Footer Info Bar */}
+        <div className="p-3 bg-black/80 backdrop-blur-md border-t border-white/10 flex justify-between items-center text-[10px] md:text-xs">
+          <div className="flex gap-6">
+            <span className="text-white/40 font-bold uppercase tracking-widest flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+              Left: Plant Crops
+            </span>
+            <span className="text-white/40 font-bold uppercase tracking-widest flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              Right: Place Defenses
             </span>
           </div>
-        </div>
-
-        {/* Skill Tree Button */}
-      
-        
-
-      </div>
-
-      {/* Game Title */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50">
-        <h1 className="text-2xl font-bold text-white text-center" style={{textShadow: '2px 2px 4px rgba(0,0,0,0.8)'}}>
-          {GAME_CONFIG.METADATA.name}
-        </h1>
-      </div>
-
-      {/* Game Container */}
-      <div className="w-full flex items-center justify-center">
-        {!isConnected || !walletAddress ? (
-          <div className="text-center text-white py-20">
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold mb-4">🛡️ Rit Defense</h2>
-              <p className="text-lg mb-6">Connect your wallet to start playing!</p>
-              <Button
-                onClick={() => connect()}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg"
-              >
-                Connect Wallet
-              </Button>
-            </div>
+          <div className="flex gap-4 items-center">
+            <span className="text-white/20 font-mono tracking-tighter">ENGINE_V3.88.2_STABLE</span>
+            <Button
+              onClick={() => window.open('https://discord.gg/B8hFgQRrq7', '_blank')}
+              variant="ghost"
+              size="sm"
+              className="h-6 text-[10px] text-white/40 hover:text-white hover:bg-white/5 border border-white/5"
+            >
+              🐛 Report Bug
+            </Button>
           </div>
-        ) : gameMode === 'game' && gameStarted ? (
-          <ClientWrapper 
-            key="defense-game-instance"
-            farmCoins={farmCoins}
-            addFarmCoins={addFarmCoins}
-            gameMode="defense"
-            onGameEvent={(event: string, data: any) => {
-              // Handle game events
-              switch (event) {
-                case 'coinsEarned':
-                  if (data && typeof data === 'number') {
-                    // Add coins for game mechanics, but score is handled by scoreUpdate event
-                    addFarmCoins(data);
-                  }
-                  break;
-                case 'enemyDefeated':
-                  // Forward enemy defeat events to skill tree manager
-                  if (skillTreeManagerRef.current) {
-                    // Dispatch browser event for skill tree manager to catch
-                    window.dispatchEvent(new CustomEvent('enemyDefeated', {
-                      detail: { score: gameScore }
-                    }));
-                  }
-                  break;
-                case 'waveComplete':
-                  if (data && typeof data === 'object' && data.wave && data.score) {
-                    // Sync with the actual Phaser game score instead of calculating separately
-                    setGameScore(data.score);
-                    toast.success(`Wave ${data.wave} completed!`);
-                  }
-                  break;
-                case 'scoreUpdate':
-                  if (data && typeof data === 'number') {
-                    // Sync React score with Phaser game score
-                    setGameScore(data);
-                    
-                    // Forward score updates to skill tree manager
-                    if (skillTreeManagerRef.current) {
-                      window.dispatchEvent(new CustomEvent('scoreUpdate', {
-                        detail: { score: data }
-                      }));
-                    }
-                  }
-                  break;
-                case 'gameOver':
-                  toast.success('Game Over! Thanks for playing!');
-                  if (onGameEnd && gameScore > 0) {
-                    onGameEnd(gameScore);
-                  }
-                  // Score submission is handled by the Phaser game's submit button
-                  break;
-                case 'gameWon':
-                  const victoryBonus = 5000;
-                  const finalScore = gameScore + victoryBonus;
-                  setGameScore(finalScore);
-                  toast.success(`Victory! +${victoryBonus} victory bonus!`);
-                  if (onGameEnd) {
-                    onGameEnd(finalScore);
-                  }
-                  // Score submission is handled by the Phaser game's submit button
-                  break;
-                default:
-                  break;
-              }
-            }}
-          />
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-white text-center">
-              <div className="mb-4">Initializing Defense Game...</div>
-              <div className="animate-pulse">🛡️</div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Game Instructions Overlay (initially hidden, can be toggled) */}
-      <div className="absolute bottom-4 left-4 z-50">
-        <div className="bg-black/50 backdrop-blur rounded-lg p-3 text-white text-sm max-w-xs">
-          <div className="font-bold mb-2" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.8)'}}>Controls:</div>
-          <div style={{textShadow: '1px 1px 2px rgba(0,0,0,0.7)'}}>👆 Click enemies to attack</div>
-          <div style={{textShadow: '1px 1px 2px rgba(0,0,0,0.7)'}}>P - Plant crops mode</div>
-          <div style={{textShadow: '1px 1px 2px rgba(0,0,0,0.7)'}}>1 - CHOG Defender (25 coins)</div>
-          <div style={{textShadow: '1px 1px 2px rgba(0,0,0,0.7)'}}>2 - MOLANDAK Guardian (50 coins)</div>
         </div>
       </div>
-
-      {/* Bug Report Button - Bottom Right */}
-      <div className="absolute bottom-4 right-4 z-50">
-        <Button
-          onClick={() => window.open('https://discord.gg/B8hFgQRrq7', '_blank')}
-          variant="outline"
-          size="sm"
-          className="bg-red-600/80 hover:bg-red-500/90 border-red-400/50 text-white backdrop-blur-sm transition-all duration-200 hover:scale-105 shadow-lg"
-          title="Report bugs in our Discord server"
-        >
-          <span className="text-xs font-medium">🐛 Report Bug</span>
-        </Button>
-      </div>
-
-     
     </div>
   );
 }
