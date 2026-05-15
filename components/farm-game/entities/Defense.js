@@ -129,7 +129,7 @@ export default class Defense {
     // Create "No mana" text indicator
     this.createNoManaText();
     
-    const defenseName = type === 'chog' ? 'CHOG Defender' : type === 'molandak' ? 'MOLANDAK Guardian' : type === 'moyaki' ? 'MOYAKI Warrior' : type === 'keon' ? 'KEON Champion' : type.charAt(0).toUpperCase() + type.slice(1);
+    const defenseName = type === 'chog' ? 'Siggy' : type === 'molandak' ? 'Suggy Guardian' : type === 'moyaki' ? 'Jez' : type === 'keon' ? 'Josh' : type.charAt(0).toUpperCase() + type.slice(1);
     console.log(`Created ${defenseName} at ${x}, ${y} with range ${this.range}`);
     
     // Apply any existing upgrades
@@ -352,10 +352,10 @@ export default class Defense {
       console.log(`✅ ${this.skinKey} texture confirmed to exist in scene`);
       this.sprite = this.scene.add.image(this.x, this.y, this.skinKey);
       
-      // Special scaling for ERKIN skin - make it much bigger
+      // Special scaling for Dunken skin - make it much bigger
       if (this.skinKey === 'erkin_idle' || this.skinKey === 'erkin_attack') {
-        this.sprite.setDisplaySize(80, 80); // Optimal size for ERKIN (reduced from 85x85)
-        console.log(`🔥 ERKIN skin detected - using larger size (80x80)`);
+        this.sprite.setDisplaySize(80, 80); // Optimal size for Dunken (reduced from 85x85)
+        console.log(`🔥 Dunken skin detected - using larger size (80x80)`);
       } else {
         this.sprite.setDisplaySize(55, 55); // Standard size for other skins
       }
@@ -399,10 +399,10 @@ export default class Defense {
       console.log(`✅ ${this.skinKey} texture confirmed to exist in scene`);
       this.sprite = this.scene.add.image(this.x, this.y, this.skinKey);
       
-      // Special scaling for ERKIN skin - make it much bigger
+      // Special scaling for Dunken skin - make it much bigger
       if (this.skinKey === 'erkin_idle' || this.skinKey === 'erkin_attack') {
-        this.sprite.setDisplaySize(80, 80); // Optimal size for ERKIN (reduced from 85x85)
-        console.log(`🔥 ERKIN skin detected - using larger size (80x80)`);
+        this.sprite.setDisplaySize(80, 80); // Optimal size for Dunken (reduced from 85x85)
+        console.log(`🔥 Dunken skin detected - using larger size (80x80)`);
       } else {
         this.sprite.setDisplaySize(55, 55); // Standard size for other skins
       }
@@ -441,10 +441,10 @@ export default class Defense {
       console.log(`✅ ${this.skinKey} texture confirmed to exist in scene`);
       this.sprite = this.scene.add.image(this.x, this.y, this.skinKey);
       
-      // Special scaling for ERKIN skin - make it much bigger
+      // Special scaling for Dunken skin - make it much bigger
       if (this.skinKey === 'erkin_idle' || this.skinKey === 'erkin_attack') {
-        this.sprite.setDisplaySize(80, 80); // Optimal size for ERKIN (reduced from 85x85)
-        console.log(`🔥 ERKIN skin detected - using larger size (80x80)`);
+        this.sprite.setDisplaySize(80, 80); // Optimal size for Dunken (reduced from 85x85)
+        console.log(`🔥 Dunken skin detected - using larger size (80x80)`);
       } else {
         this.sprite.setDisplaySize(55, 55); // Standard size for other skins
       }
@@ -483,10 +483,10 @@ export default class Defense {
       console.log(`✅ ${this.skinKey} texture confirmed to exist in scene`);
       this.sprite = this.scene.add.image(this.x, this.y, this.skinKey);
       
-      // Special scaling for ERKIN skin - make it much bigger
+      // Special scaling for Dunken skin - make it much bigger
       if (this.skinKey === 'erkin_idle' || this.skinKey === 'erkin_attack') {
-        this.sprite.setDisplaySize(80, 80); // Optimal size for ERKIN (reduced from 85x85)
-        console.log(`🔥 ERKIN skin detected - using larger size (80x80)`);
+        this.sprite.setDisplaySize(80, 80); // Optimal size for Dunken (reduced from 85x85)
+        console.log(`🔥 Dunken skin detected - using larger size (80x80)`);
       } else {
         this.sprite.setDisplaySize(55, 55); // Standard size for other skins
       }

@@ -666,9 +666,9 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
               <ul className="space-y-3 text-xs text-white/80">
                 <li className="flex gap-2"><span>👆</span> <span>Click enemies to attack</span></li>
                 <li className="flex gap-2"><span>⌨️</span> <span><b>P</b> - Plant Mode</span></li>
-                <li className="flex gap-2"><span>⌨️</span> <span><b>1</b> - CHOG</span></li>
-                <li className="flex gap-2"><span>⌨️</span> <span><b>2</b> - MOLANDAK</span></li>
-                <li className="flex gap-2"><span>⌨️</span> <span><b>3</b> - MOYAKI</span></li>
+                <li className="flex gap-2"><span>⌨️</span> <span><b>1</b> - Siggy</span></li>
+                <li className="flex gap-2"><span>⌨️</span> <span><b>2</b> - Suggy Guardian</span></li>
+                <li className="flex gap-2"><span>⌨️</span> <span><b>3</b> - Jez</span></li>
               </ul>
             </div>
           </div>
@@ -783,15 +783,15 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
           <div className="space-y-6">
             <div className="space-y-4">
               <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                <h5 className="text-xs font-bold text-yellow-500 uppercase mb-1">CHOG (25)</h5>
+                <h5 className="text-xs font-bold text-yellow-500 uppercase mb-1">Siggy (25)</h5>
                 <p className="text-[11px] text-white/70 leading-relaxed">Basic nature magic. Reliable starting defense for the garden.</p>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                <h5 className="text-xs font-bold text-blue-400 uppercase mb-1">MOLANDAK (50)</h5>
+                <h5 className="text-xs font-bold text-blue-400 uppercase mb-1">Suggy Guardian (50)</h5>
                 <p className="text-[11px] text-white/70 leading-relaxed">Frost Guardian. Freezes and slows waves of approaching enemies.</p>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                <h5 className="text-xs font-bold text-red-500 uppercase mb-1">MOYAKI (80)</h5>
+                <h5 className="text-xs font-bold text-red-500 uppercase mb-1">Jez (80)</h5>
                 <p className="text-[11px] text-white/70 leading-relaxed">Fire Mage. Delivers rapid fire magic damage to single targets.</p>
               </div>
             </div>

@@ -488,8 +488,10 @@ const FarmGameInner = ({ farmCoins, addFarmCoins, gameMode = 'farm', onGameEvent
           <div className="bg-black/30 p-4 rounded-lg">
             <p className="mb-2">👆 Click enemies to attack</p>
             <p className="mb-2">P - Plant crops mode</p>
-            <p className="mb-2">1 - CHOG Defender (25 coins)</p>
-            <p className="mb-2">2 - MOLANDAK Guardian (50 coins)</p>
+            <p className="mb-2">1 - Siggy (25 coins)</p>
+            <p className="mb-2">2 - Suggy Guardian (50 coins)</p>
+            <p className="mb-2">3 - Jez (80 coins)</p>
+            <p className="mb-2">4 - Josh (150 coins)</p>
           </div>
           
           {isClient.current && (
@@ -539,10 +541,10 @@ const FarmGameInner = ({ farmCoins, addFarmCoins, gameMode = 'farm', onGameEvent
               <h3 className="text-xl mb-3 font-bold text-blue-100">Defense Area: <span className="text-yellow-300">Ritual Defenders</span></h3>
               <p className="mb-2">Place Ritual defenders on the right side to defend against waves of enemies:</p>
               <ul className="list-disc pl-5 mb-4">
-                <li className="mb-1"><span style={{color: '#00AA00'}}><strong>CHOG Defender</strong> (25 coins)</span>: Basic nature magic, good for starting defense</li>
-                <li className="mb-1"><span style={{color: '#0088FF'}}><strong>MOLANDAK Guardian</strong> (50 coins)</span>: Ice magic that freezes and slows enemies</li>
-                <li className="mb-1"><span style={{color: '#FF4400'}}><strong>MOYAKI Warrior</strong> (80 coins)</span>: Fire magic with fast attacks and burn effects</li>
-                <li className="mb-1"><span style={{color: '#FFD700'}}><strong>KEON Champion</strong> (150 coins)</span>: Premium divine magic with massive damage and range</li>
+                <li className="mb-1"><span style={{color: '#00AA00'}}><strong>Siggy</strong> (25 coins)</span>: Basic nature magic, good for starting defense</li>
+                <li className="mb-1"><span style={{color: '#0088FF'}}><strong>Suggy Guardian</strong> (50 coins)</span>: Ice magic that freezes and slows enemies</li>
+                <li className="mb-1"><span style={{color: '#FF4400'}}><strong>Jez</strong> (80 coins)</span>: Fire magic with fast attacks and burn effects</li>
+                <li className="mb-1"><span style={{color: '#FFD700'}}><strong>Josh</strong> (150 coins)</span>: Premium divine magic with massive damage and range</li>
               </ul>
               <p className="text-sm mt-2">Enemies come from the right side - protect your crops from being destroyed!</p>
             </div>
