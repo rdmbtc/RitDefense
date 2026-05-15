@@ -7,17 +7,11 @@ import { addSignatureToHeaders } from "../utils/signature";
 class CSRFManager {
   private token: string | null = null;
   private expires: Date | null = null;
-  private readonly baseUrl: string;
-
-  constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
-  }
 
   async fetchToken(): Promise<string> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/csrf-token`, {
+      const response = await fetch(`/api/proxy/csrf-token`, {
         method: 'GET',
-        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -51,18 +45,15 @@ class CSRFManager {
   }
 }
 
-// Create CSRF manager instance
-const baseURL = process.env.NODE_ENV === "production" 
-  ? process.env.NEXT_PUBLIC_API_URL || "https://inland-grete-mondefense-9eee18bb.koyeb.app/"
-  : process.env.NEXT_PUBLIC_DEV_API_URL || "http://localhost:3001";
-
-const csrfManager = new CSRFManager(baseURL);
+// Use local proxy for all requests to avoid CORS
+const baseURL = ""; 
+const csrfManager = new CSRFManager();
 
 // Create axios instance with base configuration
 export const api = axios.create({
   baseURL,
   timeout: 10000,
-  withCredentials: true, // Include cookies for session management
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -78,7 +69,6 @@ api.interceptors.request.use(
         config.headers['X-CSRF-Token'] = token;
       } catch (error) {
         console.error('Failed to get CSRF token:', error);
-        // Continue without token - let the server handle the error
       }
     }
     
@@ -89,7 +79,6 @@ api.interceptors.request.use(
         config.headers = signedHeaders as any;
       } catch (error) {
         console.error('Failed to generate request signature:', error);
-        // Continue without signature - server will handle as optional
       }
     }
     
@@ -111,7 +100,6 @@ api.interceptors.response.use(
         console.warn('CSRF token invalid, refreshing and retrying...');
         csrfManager.clearToken();
         
-        // Retry the request with a new token
         try {
           const token = await csrfManager.getToken();
           error.config.headers['X-CSRF-Token'] = token;
@@ -123,23 +111,18 @@ api.interceptors.response.use(
       }
     }
     
-    // Handle other common errors
-    if (error.response?.status === 401) {
-      console.error("Unauthorized request");
-    }
-    
     return Promise.reject(error);
   }
 );
 
-// API endpoints
+// API endpoints updated to use local proxy routes
 export const apiEndpoints = {
-  checkWallet: "/api/check-wallet",
-  getPlayerTotalScore: "/api/get-player-total-score",
-  startGameSession: "/api/start-game-session",
-  endGameSession: "/api/end-game-session",
-  submitScore: "/api/submit-score",
-  submitScoreOnchain: "/api/submit-score-onchain",
-  leaderBoard: "/api/leaderboard",
-  playerRank: "/api/leaderboard/rank",
+  checkWallet: "/api/proxy/check-wallet",
+  getPlayerTotalScore: "/api/proxy/get-player-total-score",
+  startGameSession: "/api/proxy/start-game-session",
+  endGameSession: "/api/proxy/end-game-session",
+  submitScore: "/api/proxy/submit-score",
+  submitScoreOnchain: "/api/proxy/submit-score-onchain",
+  leaderBoard: "/api/proxy/leaderboard",
+  playerRank: "/api/proxy/leaderboard/rank",
 } as const;

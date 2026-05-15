@@ -670,9 +670,9 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
       </div>
 
       {/* Game Container */}
-      <div className="w-full h-screen flex items-center justify-center">
+      <div className="w-full flex items-center justify-center">
         {!isConnected || !walletAddress ? (
-          <div className="text-center text-white">
+          <div className="text-center text-white py-20">
             <div className="mb-8">
               <h2 className="text-3xl font-bold mb-4">🛡️ Rit Defense</h2>
               <p className="text-lg mb-6">Connect your wallet to start playing!</p>
