@@ -2492,13 +2492,13 @@ export default class Defense {
   // Helper method to get the display name for this defense
   getDisplayName() {
     if (this.type === 'chog') {
-      return 'CHOG Defender';
+      return 'Siggy';
     } else if (this.type === 'molandak') {
-      return 'MOLANDAK Guardian';
+      return 'Suggy Guardian';
     } else if (this.type === 'moyaki') {
-      return 'MOYAKI Warrior';
+      return 'Jez';
     } else if (this.type === 'keon') {
-      return 'KEON Champion';
+      return 'Josh';
     } else {
       return this.type.charAt(0).toUpperCase() + this.type.slice(1);
     }

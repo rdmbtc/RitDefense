@@ -1674,14 +1674,14 @@ if (isBrowser) {
             this.input.keyboard.on('keydown-ONE', () => {
               if (this.gameState.isActive) {
                 this.setToolMode('chog');
-                this.showFloatingText(400, 50, "CHOG Defender Selected (25 coins)", 0x0088FF);
+                this.showFloatingText(400, 50, "Siggy Selected (25 coins)", 0x0088FF);
               }
             });
             
             this.input.keyboard.on('keydown-TWO', () => {
               if (this.gameState.isActive) {
                 this.setToolMode('molandak');
-                this.showFloatingText(400, 50, "MOLANDAK Guardian Selected (50 coins)", 0xFF4400);
+                this.showFloatingText(400, 50, "Suggy Guardian Selected (50 coins)", 0xFF4400);
               }
             });
             
@@ -4761,19 +4761,19 @@ if (isBrowser) {
                 textColor = 0x00FF00;
                 break;
               case 'chog':
-                infoText = "ABS ICE MAGE: Click to place (45 coins)";
+                infoText = "Siggy: Click to place (45 coins)";
                 textColor = 0x0088FF;
                 break;
               case 'molandak':
-                infoText = "MON FIRE MAGE: Click to place (65 coins)";
+                infoText = "Suggy Guardian: Click to place (65 coins)";
                 textColor = 0xFF8800;
                 break;
               case 'keon':
-                infoText = "keon: Click to place (125 coins)";
+                infoText = "Josh: Click to place (125 coins)";
                 textColor = 0xFF00FF;
                 break;
               case 'moyaki':
-                infoText = "moyaki: Click to place (200 coins)";
+                infoText = "Jez: Click to place (200 coins)";
                 textColor = 0xFF0000;
                 break;
             }
