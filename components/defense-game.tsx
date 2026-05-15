@@ -370,6 +370,82 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
 
 
 
+  // Chapter assets for the intro
+  const chapterAssets = [
+    {
+      image: '/BG/background_menu.jpg',
+      title: 'Chapter One: The Awakening',
+      description: 'The ritual has begun. The garden is no longer safe.',
+      sound: '/assets/sounds/game/wave_start.mp3'
+    },
+    {
+      image: '/BG/background_menu.jpg',
+      title: 'The Defenders Rise',
+      description: 'Choose your defenders wisely. Each has unique powers.',
+      sound: '/assets/sounds/game/plant.mp3'
+    }
+  ];
+
+  // Function to handle chapter slide progression
+  const nextChapterSlide = async () => {
+    if (isProcessingChapter) return;
+    
+    if (chapterIndex === chapterAssets.length - 1 && (!isConnected || !walletAddress)) {
+      toast.error('Please connect your wallet to continue!');
+      connect();
+      return;
+    }
+
+    try {
+      setIsProcessingChapter(true);
+      
+      if (soundEffectRef.current) {
+        soundEffectRef.current.pause();
+        soundEffectRef.current.currentTime = 0;
+      }
+
+      if (chapterIndex < chapterAssets.length - 1) {
+        const nextIndex = chapterIndex + 1;
+        setChapterIndex(nextIndex);
+        
+        if (chapterAssets[nextIndex].sound) {
+          soundEffectRef.current = new Audio(chapterAssets[nextIndex].sound);
+          soundEffectRef.current.volume = 0.7;
+          soundEffectPlayPromise.current = soundEffectRef.current.play();
+          await soundEffectPlayPromise.current;
+        }
+      } else {
+        if (backgroundMusicRef.current) {
+          backgroundMusicRef.current.pause();
+          backgroundMusicRef.current.currentTime = 0;
+        }
+        
+        setGameMode('game');
+        setGameStarted(true);
+      }
+    } catch (error) {
+      console.warn('Chapter navigation error:', error);
+      if (chapterIndex === chapterAssets.length - 1) {
+        setGameMode('game');
+        setGameStarted(true);
+      }
+    } finally {
+      setIsProcessingChapter(false);
+    }
+  };
+
+  // Spacebar listener for chapter navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && gameMode === 'chapter') {
+        nextChapterSlide();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameMode, chapterIndex, isConnected, walletAddress, isProcessingChapter]);
+
   const handleBackToMenu = () => {
     // Clean up game before going back
     if (typeof window !== 'undefined' && window.game) {
