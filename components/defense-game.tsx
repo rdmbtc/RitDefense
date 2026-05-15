@@ -644,123 +644,166 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
         </div>
       </div>
 
-      {/* Main Game Board Container */}
-      <div className="relative z-10 w-full max-w-5xl aspect-[4/3] md:aspect-auto md:h-[85vh] bg-black/20 backdrop-blur-sm rounded-2xl border-4 border-white/10 shadow-2xl overflow-hidden flex flex-col">
+      {/* Main Layout Container: Three Columns on Large Screens */}
+      <div className="relative z-10 w-full max-w-[1400px] flex flex-col lg:flex-row gap-6 items-stretch justify-center h-full max-h-[90vh]">
         
-        {/* Top Info Bar (Inside Game Board) */}
-        <div className="flex justify-between items-center p-4 bg-black/60 border-b border-white/10 backdrop-blur-md">
-          <h1 className="text-xl md:text-2xl font-bold text-white tracking-wider" style={{textShadow: '0 0 10px rgba(255,255,255,0.3)'}}>
-            {GAME_CONFIG.METADATA.name.toUpperCase()}
-          </h1>
+        {/* Left Side: Farm Info Panel */}
+        <div className="hidden lg:flex flex-col w-64 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl overflow-y-auto">
+          <h3 className="text-xl font-bold text-green-400 mb-6 flex items-center gap-2 border-b border-white/10 pb-2">
+            🌾 Farm Area
+          </h3>
+          <div className="space-y-6 text-sm">
+            <div className="space-y-2">
+              <p className="text-white font-medium">Plant crops here to earn coins</p>
+              <ul className="space-y-3 text-white/70">
+                <li className="flex gap-2"><span>💰</span> <span>Each crop: 3 coins</span></li>
+                <li className="flex gap-2"><span>⏱️</span> <span>Crops grow over time</span></li>
+                <li className="flex gap-2"><span>🔄</span> <span>Harvest for profit</span></li>
+              </ul>
+            </div>
+            <div className="space-y-2 pt-6 border-t border-white/5">
+              <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest">Controls</h4>
+              <ul className="space-y-3 text-xs text-white/80">
+                <li className="flex gap-2"><span>👆</span> <span>Click enemies to attack</span></li>
+                <li className="flex gap-2"><span>⌨️</span> <span><b>P</b> - Plant Mode</span></li>
+                <li className="flex gap-2"><span>⌨️</span> <span><b>1</b> - CHOG</span></li>
+                <li className="flex gap-2"><span>⌨️</span> <span><b>2</b> - MOLANDAK</span></li>
+                <li className="flex gap-2"><span>⌨️</span> <span><b>3</b> - MOYAKI</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Center: Main Game Board */}
+        <div className="flex-1 flex flex-col bg-black/20 backdrop-blur-sm rounded-2xl border-4 border-white/10 shadow-2xl overflow-hidden min-w-0 md:min-w-[800px]">
           
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col items-end">
-              <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Current Score</span>
-              <span className="text-xl font-bold text-yellow-400">
-                {gameScore.toLocaleString()}
-              </span>
+          {/* Top Info Bar */}
+          <div className="flex justify-between items-center p-4 bg-black/60 border-b border-white/10 backdrop-blur-md">
+            <h1 className="text-xl md:text-2xl font-bold text-white tracking-wider" style={{textShadow: '0 0 10px rgba(255,255,255,0.3)'}}>
+              {GAME_CONFIG.METADATA.name.toUpperCase()}
+            </h1>
+            
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Current Score</span>
+                <span className="text-xl font-bold text-yellow-400">
+                  {gameScore.toLocaleString()}
+                </span>
+              </div>
+              
+              <div className="flex flex-col items-end border-l border-white/10 pl-6">
+                <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Farm Coins</span>
+                <span className="text-xl font-bold text-green-400 flex items-center gap-2">
+                  🪙 {farmCoins.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Phaser Game Surface */}
+          <div className="flex-1 relative bg-black/40 min-h-[400px]">
+            {!isConnected || !walletAddress ? (
+              <div className="absolute inset-0 flex items-center justify-center text-center text-white p-8">
+                <div className="max-w-md bg-black/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 shadow-2xl">
+                  <h2 className="text-4xl font-bold mb-6 tracking-tight">🛡️ RIT DEFENSE</h2>
+                  <p className="text-white/60 mb-8 text-lg leading-relaxed">The garden is under attack. Connect your wallet to summon your defenders and earn rewards.</p>
+                  <Button
+                    onClick={() => connect()}
+                    className="bg-white text-black hover:bg-white/90 px-10 py-6 text-xl font-bold rounded-full transition-transform active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                  >
+                    Connect to Play
+                  </Button>
+                </div>
+              </div>
+            ) : gameMode === 'game' && gameStarted ? (
+              <ClientWrapper 
+                key="defense-game-instance"
+                farmCoins={farmCoins}
+                addFarmCoins={addFarmCoins}
+                gameMode="defense"
+                onGameEvent={(event: string, data: any) => {
+                  switch (event) {
+                    case 'coinsEarned':
+                      if (data && typeof data === 'number') addFarmCoins(data);
+                      break;
+                    case 'enemyDefeated':
+                      if (skillTreeManagerRef.current) window.dispatchEvent(new CustomEvent('enemyDefeated', { detail: { score: gameScore } }));
+                      break;
+                    case 'waveComplete':
+                      if (data && typeof data === 'object' && data.wave && data.score) {
+                        setGameScore(data.score);
+                        toast.success(`Wave ${data.wave} completed!`);
+                      }
+                      break;
+                    case 'scoreUpdate':
+                      if (data && typeof data === 'number') {
+                        setGameScore(data);
+                        if (skillTreeManagerRef.current) window.dispatchEvent(new CustomEvent('scoreUpdate', { detail: { score: data } }));
+                      }
+                      break;
+                    case 'gameOver':
+                      toast.success('Game Over! Thanks for playing!');
+                      if (onGameEnd && gameScore > 0) onGameEnd(gameScore);
+                      break;
+                    case 'gameWon':
+                      const victoryBonus = 5000;
+                      const finalScore = gameScore + victoryBonus;
+                      setGameScore(finalScore);
+                      toast.success(`Victory! +${victoryBonus} victory bonus!`);
+                      if (onGameEnd) onGameEnd(finalScore);
+                      break;
+                    default: break;
+                  }
+                }}
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-white text-center flex flex-col items-center gap-4">
+                  <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                  <div className="text-sm font-bold tracking-[0.2em] text-white/50 uppercase">Initializing Engine</div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Info (only visible on mobile) */}
+          <div className="lg:hidden p-4 bg-black/60 border-t border-white/10 space-y-4">
+            <div className="flex justify-between text-[10px] text-white/50 font-bold uppercase tracking-wider">
+              <span>🌾 Plant: 3 Coins</span>
+              <span>⚔️ Defenders: 25+ Coins</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side: Defenders Info Panel */}
+        <div className="hidden lg:flex flex-col w-80 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl overflow-y-auto">
+          <h3 className="text-xl font-bold text-blue-400 mb-6 flex items-center gap-2 border-b border-white/10 pb-2">
+            🛡️ Ritual Defenders
+          </h3>
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                <h5 className="text-xs font-bold text-yellow-500 uppercase mb-1">CHOG (25)</h5>
+                <p className="text-[11px] text-white/70 leading-relaxed">Basic nature magic. Reliable starting defense for the garden.</p>
+              </div>
+              <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                <h5 className="text-xs font-bold text-blue-400 uppercase mb-1">MOLANDAK (50)</h5>
+                <p className="text-[11px] text-white/70 leading-relaxed">Frost Guardian. Freezes and slows waves of approaching enemies.</p>
+              </div>
+              <div className="bg-white/5 rounded-xl p-3 border border-white/5">
+                <h5 className="text-xs font-bold text-red-500 uppercase mb-1">MOYAKI (80)</h5>
+                <p className="text-[11px] text-white/70 leading-relaxed">Fire Mage. Delivers rapid fire magic damage to single targets.</p>
+              </div>
             </div>
             
-            <div className="flex flex-col items-end border-l border-white/10 pl-6">
-              <span className="text-[10px] text-white/50 uppercase tracking-widest font-bold">Farm Coins</span>
-              <span className="text-xl font-bold text-green-400 flex items-center gap-2">
-                🪙 {farmCoins.toLocaleString()}
-              </span>
+            <div className="pt-6 mt-auto">
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+                <p className="text-[10px] text-blue-300 font-medium italic">"Place defenders on the right side to prevent enemies from crossing the border."</p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Phaser Game Surface */}
-        <div className="flex-1 relative bg-black/40">
-          {!isConnected || !walletAddress ? (
-            <div className="absolute inset-0 flex items-center justify-center text-center text-white p-8">
-              <div className="max-w-md bg-black/80 backdrop-blur-xl p-10 rounded-3xl border border-white/10 shadow-2xl">
-                <h2 className="text-4xl font-bold mb-6 tracking-tight">🛡️ RIT DEFENSE</h2>
-                <p className="text-white/60 mb-8 text-lg leading-relaxed">The garden is under attack. Connect your wallet to summon your defenders and earn rewards.</p>
-                <Button
-                  onClick={() => connect()}
-                  className="bg-white text-black hover:bg-white/90 px-10 py-6 text-xl font-bold rounded-full transition-transform active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
-                >
-                  Connect to Play
-                </Button>
-              </div>
-            </div>
-          ) : gameMode === 'game' && gameStarted ? (
-            <ClientWrapper 
-              key="defense-game-instance"
-              farmCoins={farmCoins}
-              addFarmCoins={addFarmCoins}
-              gameMode="defense"
-              onGameEvent={(event: string, data: any) => {
-                // ... event handler logic stays same
-                switch (event) {
-                  case 'coinsEarned':
-                    if (data && typeof data === 'number') addFarmCoins(data);
-                    break;
-                  case 'enemyDefeated':
-                    if (skillTreeManagerRef.current) window.dispatchEvent(new CustomEvent('enemyDefeated', { detail: { score: gameScore } }));
-                    break;
-                  case 'waveComplete':
-                    if (data && typeof data === 'object' && data.wave && data.score) {
-                      setGameScore(data.score);
-                      toast.success(`Wave ${data.wave} completed!`);
-                    }
-                    break;
-                  case 'scoreUpdate':
-                    if (data && typeof data === 'number') {
-                      setGameScore(data);
-                      if (skillTreeManagerRef.current) window.dispatchEvent(new CustomEvent('scoreUpdate', { detail: { score: data } }));
-                    }
-                    break;
-                  case 'gameOver':
-                    toast.success('Game Over! Thanks for playing!');
-                    if (onGameEnd && gameScore > 0) onGameEnd(gameScore);
-                    break;
-                  case 'gameWon':
-                    const victoryBonus = 5000;
-                    const finalScore = gameScore + victoryBonus;
-                    setGameScore(finalScore);
-                    toast.success(`Victory! +${victoryBonus} victory bonus!`);
-                    if (onGameEnd) onGameEnd(finalScore);
-                    break;
-                  default: break;
-                }
-              }}
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-white text-center flex flex-col items-center gap-4">
-                <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-                <div className="text-sm font-bold tracking-[0.2em] text-white/50 uppercase">Initializing Engine</div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Footer Info Bar */}
-        <div className="p-3 bg-black/80 backdrop-blur-md border-t border-white/10 flex justify-between items-center text-[10px] md:text-xs">
-          <div className="flex gap-6">
-            <span className="text-white/40 font-bold uppercase tracking-widest flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-              Left: Plant Crops
-            </span>
-            <span className="text-white/40 font-bold uppercase tracking-widest flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-              Right: Place Defenses
-            </span>
-          </div>
-          <div className="flex gap-4 items-center">
-            <span className="text-white/20 font-mono tracking-tighter">ENGINE_V3.88.2_STABLE</span>
-            <Button
-              onClick={() => window.open('https://discord.gg/B8hFgQRrq7', '_blank')}
-              variant="ghost"
-              size="sm"
-              className="h-6 text-[10px] text-white/40 hover:text-white hover:bg-white/5 border border-white/5"
-            >
-              🐛 Report Bug
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
   );
