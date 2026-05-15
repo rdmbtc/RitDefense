@@ -10,6 +10,8 @@
 /coverage
 /nooter contract
 
+.agents/
+.claude/
 
 # next.js
 /.next/

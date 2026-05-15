@@ -725,7 +725,7 @@ if (isBrowser) {
                   // Show success message and range indicator
                   if (defense) {
                     const defenseName = this.pendingDefenseType === 'chog' ? 'Siggy' : 
-                                      this.pendingDefenseType === 'molandak' ? 'Suggy Guardian' : 
+                                      this.pendingDefenseType === 'molandak' ? 'Siggy Guardian' : 
                                       this.pendingDefenseType === 'moyaki' ? 'Jez' : 
                                       this.pendingDefenseType === 'keon' ? 'Josh' : 'Defense';
                     const color = this.pendingDefenseType === 'chog' ? 0x0088FF : 
@@ -1681,7 +1681,7 @@ if (isBrowser) {
             this.input.keyboard.on('keydown-TWO', () => {
               if (this.gameState.isActive) {
                 this.setToolMode('molandak');
-                this.showFloatingText(400, 50, "Suggy Guardian Selected (50 coins)", 0xFF4400);
+                this.showFloatingText(400, 50, "Siggy Guardian Selected (50 coins)", 0xFF4400);
               }
             });
             
@@ -3193,7 +3193,7 @@ if (isBrowser) {
               this.pendingDefenseType = 'molandak';
               this.pendingDefensePlacement = true;
               this.setToolMode('molandak');
-              this.showFloatingText(400, 300, "MON Fire Mage selected - Click map to place", 0xFF4400);
+              this.showFloatingText(400, 300, "Siggy Guardian selected - Click map to place", 0xFF4400);
             });
             addBounceEffect(molandakButton); // Add bounce effect
             this.addUIAnimations(molandakButton); // Add UI animations - this will handle setInteractive
@@ -3228,13 +3228,13 @@ if (isBrowser) {
             let keonImage, moyakiImage;
             let keonCostText, moyakiCostText;
 
-            // keon Button - moved down for better spacing
+            // Josh Button - moved down for better spacing
             keonButton = this.add.rectangle(320, 570, buttonWidth, buttonHeight, 0x990099).setDepth(2000);
             keonButton.on('pointerdown', () => {
               this.pendingDefenseType = 'keon';
               this.pendingDefensePlacement = true;
               this.setToolMode('keon');
-              this.showFloatingText(400, 300, "keon selected - Click map to place", 0xFF00FF);
+              this.showFloatingText(400, 300, "Josh selected - Click map to place", 0xFF00FF);
             });
             addBounceEffect(keonButton); // Add bounce effect
             this.addUIAnimations(keonButton); // Add UI animations - this will handle setInteractive
@@ -3260,13 +3260,13 @@ if (isBrowser) {
             this.toolbarButtons.keonImage = keonImage; // Store reference
             this.toolbarButtons.keonCostText = keonCostText; // Store reference
 
-            // moyaki Button - moved down for better spacing
+            // Jez Button - moved down for better spacing
             moyakiButton = this.add.rectangle(390, 570, buttonWidth, buttonHeight, 0x990000).setDepth(2000);
             moyakiButton.on('pointerdown', () => {
               this.pendingDefenseType = 'moyaki';
               this.pendingDefensePlacement = true;
               this.setToolMode('moyaki');
-              this.showFloatingText(400, 300, "moyaki selected - Click map to place", 0xFF0000);
+              this.showFloatingText(400, 300, "Jez selected - Click map to place", 0xFF0000);
             });
             addBounceEffect(moyakiButton); // Add bounce effect
             this.addUIAnimations(moyakiButton); // Add UI animations - this will handle setInteractive
@@ -3460,25 +3460,25 @@ if (isBrowser) {
     getDefenseStats(defenseType) {
       const baseStats = {
         chog: {
-          name: 'CHOG Defender',
+          name: 'Siggy Defender',
           lifetime: 2,
           damage: 0.4,
           ability: 'Nature magic with healing aura'
         },
         molandak: {
-          name: 'MOLANDAK Guardian', 
+          name: 'Siggy Guardian', 
           lifetime: 3,
           damage: 0.8,
           ability: 'Ice magic with freeze effects'
         },
         moyaki: {
-          name: 'MOYAKI Warrior',
+          name: 'Jez Warrior',
           lifetime: 3,
           damage: 0.9,
           ability: 'Fire magic with area damage'
         },
         keon: {
-          name: 'KEON Champion',
+          name: 'Josh Champion',
           lifetime: 4,
           damage: 2.5,
           ability: 'Divine magic with special attacks'
@@ -3592,9 +3592,9 @@ if (isBrowser) {
               } else if (defenseType === 'molandak') {
                 this.showDefenseRange(gridX, gridY, 100);  // MON mage range: 100
               } else if (defenseType === 'keon') {
-                this.showDefenseRange(gridX, gridY, 120);  // keon range: 120
+                this.showDefenseRange(gridX, gridY, 120);  // Josh range: 120
               } else if (defenseType === 'moyaki') {
-                this.showDefenseRange(gridX, gridY, 180);  // moyaki range: 180
+                this.showDefenseRange(gridX, gridY, 180);  // Jez range: 180
               }
             } else {
               this.plantingIndicator.setStrokeStyle(2, 0xFF0000);
@@ -3681,7 +3681,7 @@ if (isBrowser) {
             this.updateFarmCoins(-cost);
             
             // Show success message
-            const defenseName = defenseType === 'chog' ? 'CHOG Defender' : defenseType === 'molandak' ? 'MOLANDAK Guardian' : defenseType === 'moyaki' ? 'MOYAKI Warrior' : defenseType === 'keon' ? 'KEON Champion' : 'Defense';
+            const defenseName = defenseType === 'chog' ? 'Siggy Defender' : defenseType === 'molandak' ? 'Siggy Guardian' : defenseType === 'moyaki' ? 'Jez Warrior' : defenseType === 'keon' ? 'Josh Champion' : 'Defense';
             this.showFloatingText(x, y, `${defenseName} placed!`, 0x00FFFF);
             
             console.log(`Defense ${defenseType} placed at ${x},${y}`);
@@ -4263,10 +4263,10 @@ if (isBrowser) {
           
           // Defender buttons
           const defenders = [
-            { type: 'chog', name: 'CHOG Defender', color: 0x0088FF, icon: '🧙‍♂️' },
-            { type: 'molandak', name: 'MOLANDAK Guardian', color: 0xFF4400, icon: '🧙‍♀️' },
-            { type: 'moyaki', name: 'MOYAKI Warrior', color: 0xFF0000, icon: '⚔️' },
-            { type: 'keon', name: 'KEON Champion', color: 0xFF00FF, icon: '🛡️' }
+            { type: 'chog', name: 'Siggy Defender', color: 0x0088FF, icon: '🧙‍♂️' },
+            { type: 'molandak', name: 'Siggy Guardian', color: 0xFF4400, icon: '🧙‍♀️' },
+            { type: 'moyaki', name: 'Jez Warrior', color: 0xFF0000, icon: '⚔️' },
+            { type: 'keon', name: 'Josh Champion', color: 0xFF00FF, icon: '🛡️' }
           ];
           
           const buttonWidth = 100;
@@ -4558,16 +4558,16 @@ if (isBrowser) {
             } else {
               // Set text based on defense type
               if (type === 'chog') {
-                text = "ABS Ice Mage (45 coins)";
+                text = "Siggy (45 coins)";
                 textColor = "#00AAFF";
               } else if (type === 'molandak') {
-                text = "MON Fire Mage (65 coins)";
+                text = "Siggy Guardian (65 coins)";
                 textColor = "#FF4400";
               } else if (type === 'keon') {
-                text = "keon (125 coins)";
+                text = "Josh (125 coins)";
                 textColor = "#FF00FF";
               } else if (type === 'moyaki') {
-                text = "moyaki (200 coins)";
+                text = "Jez (200 coins)";
                 textColor = "#FF0000";
               }
             }
@@ -4698,12 +4698,12 @@ if (isBrowser) {
                   spriteKey = 'MON_idle';
                 } else if (mode === 'keon') {
                   range = 300;
-                  color = 0xFF00FF; // Purple for keon
-                  spriteKey = 'keon_idle'; // Use keon sprite key
+                  color = 0xFF00FF; // Purple for Josh
+                  spriteKey = 'keon_idle'; // Use Josh sprite key
                 } else if (mode === 'moyaki') {
                   range = 350;
-                  color = 0xFF0000; // Red for moyaki
-                  spriteKey = 'moyaki_idle'; // Use moyaki sprite key
+                  color = 0xFF0000; // Red for Jez
+                  spriteKey = 'moyaki_idle'; // Use Jez sprite key
                 }
                 
                 // Create circle if it doesn't exist
@@ -4765,7 +4765,7 @@ if (isBrowser) {
                 textColor = 0x0088FF;
                 break;
               case 'molandak':
-                infoText = "Suggy Guardian: Click to place (65 coins)";
+                infoText = "Siggy Guardian: Click to place (65 coins)";
                 textColor = 0xFF8800;
                 break;
               case 'keon':
@@ -4799,8 +4799,8 @@ if (isBrowser) {
             plant: 0x333333,
             chog: 0x333333,
             molandak: 0x333333,
-            keon: 0x333333, // Add keon base color
-            moyaki: 0x333333, // Add moyaki base color
+            keon: 0x333333, // Add Josh base color
+            moyaki: 0x333333, // Add Jez base color
             upgrade: 0x555500 // Keep upgrade color distinct
           };
           
@@ -4809,8 +4809,8 @@ if (isBrowser) {
             plant: 0x00AA00,
             chog: 0x0088FF,
             molandak: 0xFF8800,
-            keon: 0xFF00FF, // Active keon color
-            moyaki: 0xCC0000, // Active moyaki color
+            keon: 0xFF00FF, // Active Josh color
+            moyaki: 0xCC0000, // Active Jez color
             upgrade: 0xFFFF00 // Active upgrade color
           };
           
@@ -4921,10 +4921,10 @@ if (isBrowser) {
             
             // Show confirmation text
             const defenseNames = {
-              'chog': 'ABS Ice Mage',
-              'molandak': 'MON Fire Mage',
-              'keon': 'keon',
-              'moyaki': 'moyaki'
+              'chog': 'Siggy',
+              'molandak': 'Siggy Guardian',
+              'keon': 'Josh',
+              'moyaki': 'Jez'
             };
             
             const defenseName = defenseNames[type] || type;
@@ -4983,7 +4983,7 @@ if (isBrowser) {
             console.log("Checking for advanced defense textures");
             
             // Only create fallback textures if the actual textures aren't loaded
-            // keon textures
+            // Josh textures
             if (!this.textures.exists('keon_idle')) {
               console.log("Creating fallback keon_idle texture");
               const keonGraphics = this.make.graphics();
@@ -5010,7 +5010,7 @@ if (isBrowser) {
               }
             }
             
-            // Create moyaki textures
+            // Create Jez textures
             if (!this.textures.exists('moyaki_idle')) {
               console.log("Creating fallback moyaki_idle texture");
               const moyakiGraphics = this.make.graphics();
@@ -5239,7 +5239,7 @@ if (isBrowser) {
           }
           
           try {
-            // Update keon button
+            // Update Josh button
             if (this.toolbarButtons.keon) {
               const keonVisible = this.upgradeSystem.isDefenseUnlocked('keon');
               this.toolbarButtons.keon.visible = keonVisible;
@@ -5251,12 +5251,12 @@ if (isBrowser) {
               
               // Show notification when first unlocked
               if (keonVisible && !this.keonUnlockNotified) {
-                this.showFloatingText(400, 300, "keon Defense Unlocked!", 0xFF00FF);
+                this.showFloatingText(400, 300, "Josh Defense Unlocked!", 0xFF00FF);
                 this.keonUnlockNotified = true;
               }
             }
             
-            // Update moyaki button
+            // Update Jez button
             if (this.toolbarButtons.moyaki) {
               const moyakiVisible = this.upgradeSystem.isDefenseUnlocked('moyaki');
               this.toolbarButtons.moyaki.visible = moyakiVisible;
@@ -5268,7 +5268,7 @@ if (isBrowser) {
               
               // Show notification when first unlocked
               if (moyakiVisible && !this.moyakiUnlockNotified) {
-                this.showFloatingText(400, 300, "moyaki Defense Unlocked!", 0xFF0000);
+                this.showFloatingText(400, 300, "Jez Defense Unlocked!", 0xFF0000);
                 this.moyakiUnlockNotified = true;
               }
             }
@@ -6838,7 +6838,8 @@ if (isBrowser) {
             });
             
             // Enhanced defender name with epic styling - SMALLER SIZE
-            const defenderNameText = this.add.text(160, y - 10, defenderType, {
+            const defenderDisplayName = this.getDefenderDisplayName(defenderType);
+            const defenderNameText = this.add.text(160, y - 10, defenderDisplayName, {
               fontFamily: 'Arial Black',
               fontSize: '16px',
               color: '#f1f5f9',
@@ -7080,6 +7081,16 @@ if (isBrowser) {
             'KEON': '⚡'
           };
           return emojis[defenderType] || '🛡️';
+        }
+        
+        getDefenderDisplayName(defenderType) {
+          const names = {
+            'CHOG': 'Siggy',
+            'MOLANDAK': 'Siggy Guardian',
+            'MOYAKI': 'Jez',
+            'KEON': 'Josh'
+          };
+          return names[defenderType] || defenderType;
         }
         
         getDefenderColor(defenderType) {

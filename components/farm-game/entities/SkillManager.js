@@ -10,7 +10,7 @@ export default class SkillManager {
   }
 
   initializeSkillEffects() {
-    // CHOG Skills
+    // Siggy Skills
     this.skillEffects.set('chog_rapid_fire', {
       name: 'Rapid Fire',
       description: 'Reduces attack cooldown by 30%',
@@ -73,7 +73,7 @@ export default class SkillManager {
       }
     });
 
-    // MOLANDAK Skills
+    // Siggy Guardian Skills
     this.skillEffects.set('molandak_frost_aura', {
       name: 'Frost Aura',
       description: 'Slows enemies within range by 30%',
@@ -140,7 +140,7 @@ export default class SkillManager {
       }
     });
 
-    // MOYAKI Skills
+    // Jez Skills
     this.skillEffects.set('moyaki_flame_burst', {
       name: 'Flame Burst',
       description: 'Increases AOE damage by 50%',
@@ -205,7 +205,7 @@ export default class SkillManager {
       }
     });
 
-    // KEON Skills
+    // Josh Skills
     this.skillEffects.set('keon_divine_blessing', {
       name: 'Divine Blessing',
       description: 'Increases damage by 30% and mana regeneration by 50%',

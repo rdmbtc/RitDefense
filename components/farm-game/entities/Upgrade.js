@@ -8,11 +8,11 @@ export default class Upgrade {
     this.levels = {
       clickDamage: 1,     // Player's direct attack strength
       cropYield: 1,       // How much coins crops generate
-      chogPower: 1,  // chog defense power
-      molandakPower: 1,        // molandak defense power
+      chogPower: 1,  // Siggy defense power
+      molandakPower: 1,        // Siggy Guardian defense power
       cropGrowth: 1,      // How fast crops grow
-      keonPower: 1,     // keon defense power - advanced defense
-      moyakiPower: 1      // moyaki defense power - advanced defense
+      keonPower: 1,     // Josh defense power - advanced defense
+      moyakiPower: 1      // Jez defense power - advanced defense
     };
     
     // Define max levels for each upgrade
@@ -22,8 +22,8 @@ export default class Upgrade {
       chogPower: 3,
       molandakPower: 3,
       cropGrowth: 3,
-      keonPower: 3,     // Added for keon
-      moyakiPower: 3      // Added for moyaki
+      keonPower: 3,     // Added for Josh
+      moyakiPower: 3      // Added for Jez
     };
     
     // Define costs for each upgrade level
@@ -393,15 +393,15 @@ export default class Upgrade {
       case 'cropYield':
         return 'Crop Yield';
       case 'chogPower':
-        return 'Chog Mage Power';
+        return 'Siggy Mage Power';
       case 'molandakPower':
-        return 'Molandak Mage Power';
+        return 'Siggy Guardian Mage Power';
       case 'cropGrowth':
         return 'Crop Growth Rate';
       case 'keonPower':
-        return 'keon Power';
+        return 'Josh Power';
       case 'moyakiPower':
-        return 'moyaki Power';
+        return 'Jez Power';
       default:
         return type;
     }

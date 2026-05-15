@@ -667,7 +667,7 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
                 <li className="flex gap-2"><span>👆</span> <span>Click enemies to attack</span></li>
                 <li className="flex gap-2"><span>⌨️</span> <span><b>P</b> - Plant Mode</span></li>
                 <li className="flex gap-2"><span>⌨️</span> <span><b>1</b> - Siggy</span></li>
-                <li className="flex gap-2"><span>⌨️</span> <span><b>2</b> - Suggy Guardian</span></li>
+                <li className="flex gap-2"><span>⌨️</span> <span><b>2</b> - Siggy Guardian</span></li>
                 <li className="flex gap-2"><span>⌨️</span> <span><b>3</b> - Jez</span></li>
               </ul>
             </div>
@@ -787,7 +787,7 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
                 <p className="text-[11px] text-white/70 leading-relaxed">Basic nature magic. Reliable starting defense for the garden.</p>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                <h5 className="text-xs font-bold text-blue-400 uppercase mb-1">Suggy Guardian (50)</h5>
+                <h5 className="text-xs font-bold text-blue-400 uppercase mb-1">Siggy Guardian (50)</h5>
                 <p className="text-[11px] text-white/70 leading-relaxed">Frost Guardian. Freezes and slows waves of approaching enemies.</p>
               </div>
               <div className="bg-white/5 rounded-xl p-3 border border-white/5">

@@ -129,7 +129,7 @@ export default class Defense {
     // Create "No mana" text indicator
     this.createNoManaText();
     
-    const defenseName = type === 'chog' ? 'Siggy' : type === 'molandak' ? 'Suggy Guardian' : type === 'moyaki' ? 'Jez' : type === 'keon' ? 'Josh' : type.charAt(0).toUpperCase() + type.slice(1);
+    const defenseName = type === 'chog' ? 'Siggy' : type === 'molandak' ? 'Siggy Guardian' : type === 'moyaki' ? 'Jez' : type === 'keon' ? 'Josh' : type.charAt(0).toUpperCase() + type.slice(1);
     console.log(`Created ${defenseName} at ${x}, ${y} with range ${this.range}`);
     
     // Apply any existing upgrades
@@ -344,8 +344,8 @@ export default class Defense {
   }
   
   createChogMage() {
-    // Create visual representation of CHOG character
-    console.log(`🛡️ Creating CHOG sprite at (${this.x}, ${this.y}) using texture '${this.skinKey}'`);
+    // Create visual representation of Siggy character
+    console.log(`🛡️ Creating Siggy sprite at (${this.x}, ${this.y}) using texture '${this.skinKey}'`);
 
     // Verify texture exists before creating sprite
     if (this.scene.textures.exists(this.skinKey)) {
@@ -361,18 +361,18 @@ export default class Defense {
       }
       
       this.sprite.setDepth(101); // Ensure visible above ground tiles
-      console.log(`✅ CHOG sprite created successfully with actual texture, visible: ${this.sprite.visible}`);
+      console.log(`✅ Siggy sprite created successfully with actual texture, visible: ${this.sprite.visible}`);
     } else {
       console.error(`❌ ${this.skinKey} texture NOT found in scene! Available textures:`, Object.keys(this.scene.textures.list));
       // Create fallback sprite
       this.sprite = this.scene.add.circle(this.x, this.y, 24, 0x00AA00);
       this.sprite.setDepth(101);
-      console.log(`🎨 Created fallback CHOG sprite (green circle)`);
+      console.log(`🎨 Created fallback Siggy sprite (green circle)`);
     }
 
     // Verify sprite was created properly
     if (!this.sprite) {
-      console.error("❌ CHOG sprite creation failed!");
+      console.error("❌ Siggy sprite creation failed!");
     }
 
     // Add a range indicator (usually invisible, shown on hover)
@@ -391,8 +391,8 @@ export default class Defense {
   }
 
   createMolandakMage() {
-    // Create visual representation of MOLANDAK character
-    console.log(`❄️ Creating MOLANDAK sprite at (${this.x}, ${this.y}) using texture '${this.skinKey}'`);
+    // Create visual representation of Siggy Guardian character
+    console.log(`❄️ Creating Siggy Guardian sprite at (${this.x}, ${this.y}) using texture '${this.skinKey}'`);
 
     // Verify texture exists before creating sprite
     if (this.scene.textures.exists(this.skinKey)) {
@@ -408,13 +408,13 @@ export default class Defense {
       }
       
       this.sprite.setDepth(101); // Ensure visible above ground tiles
-      console.log(`✅ MOLANDAK sprite created successfully with actual texture, visible: ${this.sprite.visible}`);
+      console.log(`✅ Siggy Guardian sprite created successfully with actual texture, visible: ${this.sprite.visible}`);
     } else {
       console.error(`❌ ${this.skinKey} texture NOT found in scene! Available textures:`, Object.keys(this.scene.textures.list));
       // Create fallback sprite
       this.sprite = this.scene.add.circle(this.x, this.y, 24, 0x0088FF);
       this.sprite.setDepth(101);
-      console.log(`🎨 Created fallback MOLANDAK sprite (blue circle)`);
+      console.log(`🎨 Created fallback Siggy Guardian sprite (blue circle)`);
     }
 
     // Add a range indicator (usually invisible, shown on hover)
@@ -433,8 +433,8 @@ export default class Defense {
   }
 
   createMoyakiMage() {
-    // Create visual representation of MOYAKI character
-    console.log(`🔥 Creating MOYAKI sprite at (${this.x}, ${this.y}) using texture '${this.skinKey}'`);
+    // Create visual representation of Jez character
+    console.log(`🔥 Creating Jez sprite at (${this.x}, ${this.y}) using texture '${this.skinKey}'`);
 
     // Verify texture exists before creating sprite
     if (this.scene.textures.exists(this.skinKey)) {
@@ -450,13 +450,13 @@ export default class Defense {
       }
       
       this.sprite.setDepth(101); // Ensure visible above ground tiles
-      console.log(`✅ MOYAKI sprite created successfully with actual texture, visible: ${this.sprite.visible}`);
+      console.log(`✅ Jez sprite created successfully with actual texture, visible: ${this.sprite.visible}`);
     } else {
       console.error(`❌ ${this.skinKey} texture NOT found in scene! Available textures:`, Object.keys(this.scene.textures.list));
       // Create fallback sprite
       this.sprite = this.scene.add.circle(this.x, this.y, 24, 0xFF4400);
       this.sprite.setDepth(101);
-      console.log(`🎨 Created fallback MOYAKI sprite (orange circle)`);
+      console.log(`🎨 Created fallback Jez sprite (orange circle)`);
     }
 
     // Add a range indicator (usually invisible, shown on hover)
@@ -475,8 +475,8 @@ export default class Defense {
   }
 
   createKeonMage() {
-    // Create visual representation of KEON character (premium)
-    console.log(`👑 Creating KEON sprite at (${this.x}, ${this.y}) using texture '${this.skinKey}'`);
+    // Create visual representation of Josh character (premium)
+    console.log(`👑 Creating Josh sprite at (${this.x}, ${this.y}) using texture '${this.skinKey}'`);
 
     // Verify texture exists before creating sprite
     if (this.scene.textures.exists(this.skinKey)) {
@@ -492,13 +492,13 @@ export default class Defense {
       }
       
       this.sprite.setDepth(101); // Ensure visible above ground tiles
-      console.log(`✅ KEON sprite created successfully with actual texture, visible: ${this.sprite.visible}`);
+      console.log(`✅ Josh sprite created successfully with actual texture, visible: ${this.sprite.visible}`);
     } else {
       console.error(`❌ ${this.skinKey} texture NOT found in scene! Available textures:`, Object.keys(this.scene.textures.list));
       // Create fallback sprite
       this.sprite = this.scene.add.circle(this.x, this.y, 19, 0xFFD700);
       this.sprite.setDepth(101);
-      console.log(`🎨 Created fallback KEON sprite (gold circle)`);
+      console.log(`🎨 Created fallback Josh sprite (gold circle)`);
     }
 
     // Add a range indicator (usually invisible, shown on hover)
@@ -518,7 +518,7 @@ export default class Defense {
   
   // Visual effect methods for different tiers
   createBasicIdleEffect() {
-    // Simple pulsing effect for basic CHOG unit - no scaling, just alpha
+    // Simple pulsing effect for basic Siggy unit - no scaling, just alpha
     this.scene.tweens.add({
       targets: this.sprite,
       alpha: 0.9,
@@ -552,7 +552,7 @@ export default class Defense {
   }
 
   createPremiumIdleEffect() {
-    // Premium KEON gets multiple effects
+    // Premium Josh gets multiple effects
 
     // Floating effect
     this.scene.tweens.add({
@@ -574,12 +574,12 @@ export default class Defense {
       ease: 'Sine.easeInOut'
     });
 
-    // Create golden aura particles around KEON
+    // Create golden aura particles around Josh
     this.createKeonAura();
   }
 
   createKeonAura() {
-    // Create golden particle effect around KEON
+    // Create golden particle effect around Josh
     const particles = this.scene.add.particles(this.x, this.y, 'pixel', {
       scale: { start: 0.3, end: 0 },
       speed: { min: 10, max: 30 },
@@ -1500,7 +1500,7 @@ export default class Defense {
     
     // Show enhanced attack animation
     if (this.type === 'chog') {
-      // CHOG nature attack animation
+      // Siggy nature attack animation
       if (this.sprite) {
         this.sprite.setTexture(this.skinKey.replace('_idle', '_attack'));
 
@@ -1533,7 +1533,7 @@ export default class Defense {
       // Show spell effect
       this.showDamageText(enemy, `${damageAmount.toFixed(1)}`, 0x00AA00);
     } else if (this.type === 'molandak') {
-      // MOLANDAK ice attack animation
+      // Siggy Guardian ice attack animation
       if (this.sprite) {
         this.sprite.setTexture(this.skinKey.replace('_idle', '_attack'));
 
@@ -1566,7 +1566,7 @@ export default class Defense {
       // Show spell effect
       this.showDamageText(enemy, `${damageAmount.toFixed(1)}`, 0x0088FF);
     } else if (this.type === 'moyaki') {
-      // MOYAKI fire attack animation
+      // Jez fire attack animation
       if (this.sprite) {
         this.sprite.setTexture(this.skinKey.replace('_idle', '_attack'));
 
@@ -1599,7 +1599,7 @@ export default class Defense {
       // Show spell effect
       this.showDamageText(enemy, `${damageAmount.toFixed(1)}`, 0xFF4400);
     } else if (this.type === 'keon') {
-      // KEON divine attack animation
+      // Josh divine attack animation
       if (this.sprite) {
         this.sprite.setTexture(this.skinKey.replace('_idle', '_attack'));
 
@@ -2494,7 +2494,7 @@ export default class Defense {
     if (this.type === 'chog') {
       return 'Siggy';
     } else if (this.type === 'molandak') {
-      return 'Suggy Guardian';
+      return 'Siggy Guardian';
     } else if (this.type === 'moyaki') {
       return 'Jez';
     } else if (this.type === 'keon') {
@@ -2507,13 +2507,13 @@ export default class Defense {
   // Helper method to get the color for this defense
   getColor() {
     if (this.type === 'chog') {
-      return '#00AA00'; // Green for CHOG
+      return '#00AA00'; // Green for Siggy
     } else if (this.type === 'molandak') {
-      return '#0088FF'; // Blue for MOLANDAK
+      return '#0088FF'; // Blue for Siggy Guardian
     } else if (this.type === 'moyaki') {
-      return '#FF4400'; // Red for MOYAKI
+      return '#FF4400'; // Red for Jez
     } else if (this.type === 'keon') {
-      return '#FFD700'; // Gold for KEON
+      return '#FFD700'; // Gold for Josh
     } else {
       return '#FFFFFF'; // Default white
     }
@@ -2681,7 +2681,7 @@ export default class Defense {
     if (this.scene && this.scene.gameState) {
       const coinReward = this.type === 'chog' ? 3 :
                         this.type === 'molandak' ? 4 :
-                        this.type === 'moyaki' ? 5 : 8; // KEON gives most coins
+                        this.type === 'moyaki' ? 5 : 8; // Josh gives most coins
       if (typeof this.scene.updateFarmCoins === 'function') {
         this.scene.updateFarmCoins(coinReward);
       }

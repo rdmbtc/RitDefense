@@ -489,7 +489,7 @@ const FarmGameInner = ({ farmCoins, addFarmCoins, gameMode = 'farm', onGameEvent
             <p className="mb-2">👆 Click enemies to attack</p>
             <p className="mb-2">P - Plant crops mode</p>
             <p className="mb-2">1 - Siggy (25 coins)</p>
-            <p className="mb-2">2 - Suggy Guardian (50 coins)</p>
+            <p className="mb-2">2 - Siggy Guardian (50 coins)</p>
             <p className="mb-2">3 - Jez (80 coins)</p>
             <p className="mb-2">4 - Josh (150 coins)</p>
           </div>
@@ -542,7 +542,7 @@ const FarmGameInner = ({ farmCoins, addFarmCoins, gameMode = 'farm', onGameEvent
               <p className="mb-2">Place Ritual defenders on the right side to defend against waves of enemies:</p>
               <ul className="list-disc pl-5 mb-4">
                 <li className="mb-1"><span style={{color: '#00AA00'}}><strong>Siggy</strong> (25 coins)</span>: Basic nature magic, good for starting defense</li>
-                <li className="mb-1"><span style={{color: '#0088FF'}}><strong>Suggy Guardian</strong> (50 coins)</span>: Ice magic that freezes and slows enemies</li>
+                <li className="mb-1"><span style={{color: '#0088FF'}}><strong>Siggy Guardian</strong> (50 coins)</span>: Ice magic that freezes and slows enemies</li>
                 <li className="mb-1"><span style={{color: '#FF4400'}}><strong>Jez</strong> (80 coins)</span>: Fire magic with fast attacks and burn effects</li>
                 <li className="mb-1"><span style={{color: '#FFD700'}}><strong>Josh</strong> (150 coins)</span>: Premium divine magic with massive damage and range</li>
               </ul>

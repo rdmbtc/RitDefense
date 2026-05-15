@@ -71,7 +71,7 @@ export default class SkillDefender extends Defense {
     if (!skillData) return;
     
     switch (skillId) {
-      // CHOG Skills
+      // Siggy Skills
       case 'chog_wind_gust':
         this.range *= 1.25;
         this.addKnockbackEffect();
@@ -93,7 +93,7 @@ export default class SkillDefender extends Defense {
         this.addPoisonSporesUltimate();
         break;
         
-      // MOLANDAK Skills
+      // Siggy Guardian Skills
       case 'molandak_frost_aura':
         this.addFrostAura();
         break;
@@ -113,7 +113,7 @@ export default class SkillDefender extends Defense {
         this.addPermafrostUltimate();
         break;
         
-      // MOYAKI Skills
+      // Jez Skills
       case 'moyaki_flame_burst':
         this.addFlameBurstEffect();
         break;
@@ -133,7 +133,7 @@ export default class SkillDefender extends Defense {
         this.addFireLordUltimate();
         break;
         
-      // KEON Skills
+      // Josh Skills
       case 'keon_tactical_analysis':
         this.addTacticalAnalysis();
         break;
@@ -167,7 +167,7 @@ export default class SkillDefender extends Defense {
     return null;
   }
   
-  // CHOG Skill Implementations
+  // Siggy Skill Implementations
   addKnockbackEffect() {
     this.knockbackPower = 50;
     this.originalAttack = this.attack.bind(this);
@@ -271,7 +271,7 @@ export default class SkillDefender extends Defense {
     };
   }
   
-  // MOLANDAK Skill Implementations
+  // Siggy Guardian Skill Implementations
   addFrostAura() {
     this.frostAuraRadius = 100;
     this.frostSlowEffect = 0.3; // 30% slow
@@ -340,7 +340,7 @@ export default class SkillDefender extends Defense {
     };
   }
   
-  // MOYAKI Skill Implementations
+  // Jez Skill Implementations
   addFlameBurstEffect() {
     this.flameBurstRadius = 60;
     this.originalAttack = this.attack.bind(this);
@@ -388,7 +388,7 @@ export default class SkillDefender extends Defense {
     };
   }
   
-  // KEON Skill Implementations
+  // Josh Skill Implementations
   addTacticalAnalysis() {
     this.analysisRadius = 150;
     this.damageBonus = 0.25; // 25% damage bonus

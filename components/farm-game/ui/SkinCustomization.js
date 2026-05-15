@@ -15,20 +15,20 @@ export default class SkinCustomization {
         // Available skins for each defender type
         this.availableSkins = {
             chog: [
-                { key: 'chog_idle', name: 'Default Chog', unlocked: true },
-                { key: 'jumapel_idle', name: 'Jumapel', unlocked: true, requirement: 100 }
+                { key: 'chog_idle', name: 'Default Siggy', unlocked: true },
+                { key: 'jumapel_idle', name: 'Stefan', unlocked: true, requirement: 100 }
             ],
             keon: [
-                { key: 'keon_idle', name: 'Default Keon', unlocked: true },
-                { key: 'skrumpet_idle', name: 'Skrumpet', unlocked: true, requirement: 200 }
+                { key: 'keon_idle', name: 'Default Josh', unlocked: true },
+                { key: 'skrumpet_idle', name: 'Val Alexander', unlocked: true, requirement: 200 }
             ],
             molandak: [
-                { key: 'molandak_idle', name: 'Default Molandak', unlocked: true },
-                { key: 'erkin_idle', name: 'Erkin', unlocked: true, requirement: 150 }
+                { key: 'molandak_idle', name: 'Default Siggy Guardian', unlocked: true },
+                { key: 'erkin_idle', name: 'Dunken', unlocked: true, requirement: 150 }
             ],
             moyaki: [
-                { key: 'moyaki_idle', name: 'Default Moyaki', unlocked: true },
-                { key: 'realnads_idle', name: 'RealNads', unlocked: true, requirement: 300 }
+                { key: 'moyaki_idle', name: 'Default Jez', unlocked: true },
+                { key: 'realnads_idle', name: 'Flash', unlocked: true, requirement: 300 }
             ]
         };
         
@@ -122,8 +122,15 @@ export default class SkinCustomization {
         this.container.add(mainPanel);
         
         // Title
+        const defenderDisplayNames = {
+            chog: 'SIGGY',
+            molandak: 'SIGGY GUARDIAN',
+            moyaki: 'JEZ',
+            keon: 'JOSH'
+        };
+        const titleName = defenderDisplayNames[this.selectedDefenderType] || this.selectedDefenderType.toUpperCase();
         const title = this.scene.add.text(centerX, centerY - 220, 
-            `${this.selectedDefenderType.toUpperCase()} SKINS`, {
+            `${titleName} SKINS`, {
             fontSize: '28px',
             fontFamily: 'Arial',
             color: '#ffffff',

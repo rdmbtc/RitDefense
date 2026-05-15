@@ -34,7 +34,7 @@ class SkillTreeManager {
   initializeSkillTreeData() {
     return {
       CHOG: {
-        name: 'CHOG',
+        name: 'Siggy',
         description: 'Wind-based defender with area control abilities',
         tiers: {
           1: {
@@ -103,7 +103,7 @@ class SkillTreeManager {
         }
       },
       MOLANDAK: {
-        name: 'MOLANDAK',
+        name: 'Siggy Guardian',
         description: 'Ice-based defender with crowd control and slowing abilities',
         tiers: {
           1: {
@@ -172,7 +172,7 @@ class SkillTreeManager {
         }
       },
       MOYAKI: {
-        name: 'MOYAKI',
+        name: 'Jez',
         description: 'Fire-based defender with high damage and explosive abilities',
         tiers: {
           1: {
@@ -241,7 +241,7 @@ class SkillTreeManager {
         }
       },
       KEON: {
-        name: 'KEON',
+        name: 'Josh',
         description: 'Strategic defender with tactical abilities and support skills',
         tiers: {
           1: {
