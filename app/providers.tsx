@@ -28,8 +28,8 @@ function ClientInit({ children }: { children: ReactNode }) {
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <ErrorBoundary>
-      <WagmiProviders>
-        <ClientInit>
+      <ClientInit>
+        <WagmiProviders>
           <ProvidersInner>
             <GameProvider>
               <GuideProvider>
@@ -37,8 +37,8 @@ export function Providers({ children }: { children: ReactNode }) {
               </GuideProvider>
             </GameProvider>
           </ProvidersInner>
-        </ClientInit>
-      </WagmiProviders>
+        </WagmiProviders>
+      </ClientInit>
     </ErrorBoundary>
   );
 }

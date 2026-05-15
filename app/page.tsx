@@ -378,8 +378,7 @@ const StyledWrapper = styled.div`
 
 // Import the actual Home component with SSR disabled entirely
 const HomePage = dynamic(() => import('@/components/home-page'), {
-  ssr: false,
-  loading: () => <Loader />
+  ssr: false
 });
 
 export default function Page() {

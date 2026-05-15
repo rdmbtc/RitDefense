@@ -25,7 +25,9 @@ class ConsoleManager {
   };
 
   constructor() {
-    this.initializeConsoleOverride();
+    if (typeof window !== 'undefined') {
+      this.initializeConsoleOverride();
+    }
   }
 
   private initializeConsoleOverride() {

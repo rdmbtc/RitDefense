@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import Phaser from 'phaser';
 
 // Type declarations for Phaser objects
 declare global {
@@ -14,7 +13,7 @@ declare global {
 
 // Dynamically import FarmGame with SSR disabled
 const FarmGame = dynamic(
-  () => import('./FarmGame').then((mod) => mod.default || mod),
+  () => import('./FarmGame'),
   { ssr: false, loading: () => <LoadingPlaceholder /> }
 );
 
