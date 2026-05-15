@@ -724,10 +724,10 @@ if (isBrowser) {
                   
                   // Show success message and range indicator
                   if (defense) {
-                    const defenseName = this.pendingDefenseType === 'chog' ? 'CHOG Defender' : 
-                                      this.pendingDefenseType === 'molandak' ? 'MOLANDAK Guardian' : 
-                                      this.pendingDefenseType === 'moyaki' ? 'MOYAKI Warrior' : 
-                                      this.pendingDefenseType === 'keon' ? 'KEON Champion' : 'Defense';
+                    const defenseName = this.pendingDefenseType === 'chog' ? 'Siggy' : 
+                                      this.pendingDefenseType === 'molandak' ? 'Suggy Guardian' : 
+                                      this.pendingDefenseType === 'moyaki' ? 'Jez' : 
+                                      this.pendingDefenseType === 'keon' ? 'Josh' : 'Defense';
                     const color = this.pendingDefenseType === 'chog' ? 0x0088FF : 
                                 this.pendingDefenseType === 'molandak' ? 0xFF4400 : 
                                 this.pendingDefenseType === 'moyaki' ? 0xFF0000 : 
@@ -3157,7 +3157,7 @@ if (isBrowser) {
               this.pendingDefenseType = 'chog';
               this.pendingDefensePlacement = true;
               this.setToolMode('chog');
-              this.showFloatingText(400, 300, "ABS Ice Mage selected - Click map to place", 0x0088FF);
+              this.showFloatingText(400, 300, "Siggy selected - Click map to place", 0x0088FF);
             });
              addBounceEffect(chogButton); // Add bounce effect
              this.addUIAnimations(chogButton); // Add UI animations - this will handle setInteractive
