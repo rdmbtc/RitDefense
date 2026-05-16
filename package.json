@@ -42,7 +42,6 @@
     "@radix-ui/react-tooltip": "1.0.7",
     "@stagewise/toolbar-next": "^0.6.1",
     "@tanstack/react-query": "^5.72.2",
-    "wagmi": "^2.17.3",
     "@types/dompurify": "^3.0.5",
     "@types/js-cookie": "^3.0.6",
     "@wagmi/core": "^2.17.3",
@@ -90,6 +89,7 @@
     "unique-names-generator": "^4.7.1",
     "vaul": "^0.9.6",
     "viem": "^2.32.0",
+    "wagmi": "^2.17.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -108,6 +108,7 @@
     "dotenv": "^17.2.0",
     "hardhat": "^3.0.6",
     "postcss": "^8",
+    "solc": "^0.8.24",
     "ts-node": "^10.9.2",
     "typescript": "^5"
   },

@@ -16,6 +16,8 @@ import {
   Sprout, Coins, Clock, RefreshCw, Keyboard, MousePointerClick,
   Shield, Snowflake, Flame, Crown, Leaf, Info,
 } from 'lucide-react';
+import { SubmitScoreModal } from '@/components/submit-score-modal';
+import type { Address } from 'viem';
 
 
 
@@ -69,6 +71,10 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
   const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isProcessingChapter, setIsProcessingChapter] = useState(false);
+
+  // Submit-score modal state (game-over screen)
+  const [submitOpen, setSubmitOpen] = useState(false);
+  const [submitState, setSubmitState] = useState<{ score: number; isWin: boolean } | null>(null);
   
   // Use custom hooks for API integration
   const { connected: isConnected, address: walletAddress, connect } = useWallet();
@@ -795,6 +801,10 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
                       break;
                     case 'gameOver':
                       toast.success('Game Over! Thanks for playing!');
+                      if (gameScore > 0) {
+                        setSubmitState({ score: gameScore, isWin: false });
+                        setSubmitOpen(true);
+                      }
                       if (onGameEnd && gameScore > 0) onGameEnd(gameScore);
                       break;
                     case 'gameWon':
@@ -802,6 +812,8 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
                       const finalScore = gameScore + victoryBonus;
                       setGameScore(finalScore);
                       toast.success(`Victory! +${victoryBonus} victory bonus!`);
+                      setSubmitState({ score: finalScore, isWin: true });
+                      setSubmitOpen(true);
                       if (onGameEnd) onGameEnd(finalScore);
                       break;
                     default: break;
@@ -900,6 +912,16 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
         </div>
 
       </div>
+
+      {/* Game-over: submit score modal */}
+      <SubmitScoreModal
+        open={submitOpen}
+        onOpenChange={setSubmitOpen}
+        score={submitState?.score ?? 0}
+        isWin={submitState?.isWin ?? false}
+        player={(walletAddress as Address | null) ?? null}
+        onConnect={() => connect()}
+      />
     </div>
   );
 }

@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import dynamic from 'next/dynamic';
 import {
   Shield, Swords, Trophy, Sparkles, Crown,
-  PlayCircle, Info, Heart, ScrollText
+  PlayCircle, Info, Heart, ScrollText, ExternalLink, RefreshCw,
 } from 'lucide-react';
 
 const DefenseGame = dynamic(() => import('./defense-game'), {
@@ -21,59 +21,68 @@ const DefenseGame = dynamic(() => import('./defense-game'), {
   )
 });
 
-type LeaderboardEntry = { name: string; score: number; date: string };
+type LeaderboardApiEntry = {
+  address: string;
+  bestScore: number;
+  totalScore: number;
+  submissions: number;
+  lastSubmittedAt: number;
+};
+
+type LeaderboardApiResponse = {
+  ok: boolean;
+  contract?: string;
+  chainId?: number;
+  totalPlayers?: number;
+  totalSubmissions?: number;
+  entries?: LeaderboardApiEntry[];
+  error?: string;
+};
+
+function shortenAddress(addr: string) {
+  if (!addr) return '';
+  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
 
 export default function HomePage() {
   const [gameMode, setGameMode] = useState<'home' | 'defense'>('home');
   const backgroundMusicRef = useRef<HTMLAudioElement | null>(null);
   const soundEffectRef = useRef<HTMLAudioElement | null>(null);
 
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [board, setBoard] = useState<LeaderboardApiResponse | null>(null);
+  const [boardLoading, setBoardLoading] = useState(false);
+  const [boardError, setBoardError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
+  const fetchBoard = useCallback(async () => {
+    setBoardLoading(true);
+    setBoardError(null);
     try {
-      const saved = localStorage.getItem('ritdefense-leaderboard');
-      if (saved) setLeaderboard(JSON.parse(saved));
-    } catch (e) {
-      // ignore corrupt local data
+      const res = await fetch('/api/leaderboard/list?limit=10', { cache: 'no-store' });
+      const data: LeaderboardApiResponse = await res.json();
+      if (!res.ok || !data.ok) {
+        setBoardError(data.error || `HTTP ${res.status}`);
+      } else {
+        setBoard(data);
+      }
+    } catch (e: any) {
+      setBoardError(e?.message ?? String(e));
+    } finally {
+      setBoardLoading(false);
     }
   }, []);
 
-  const saveScore = useCallback((score: number) => {
-    if (typeof window === 'undefined') return;
-    const playerName = window.prompt('Enter your name for the leaderboard:') || 'Anonymous';
-    const newEntry: LeaderboardEntry = {
-      name: playerName,
-      score,
-      date: new Date().toLocaleDateString(),
-    };
-
-    const updatedLeaderboard = [...leaderboard, newEntry]
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 10);
-
-    setLeaderboard(updatedLeaderboard);
-    try {
-      localStorage.setItem('ritdefense-leaderboard', JSON.stringify(updatedLeaderboard));
-    } catch (e) {
-      // localStorage may be unavailable; non-fatal
-    }
-  }, [leaderboard]);
+  useEffect(() => {
+    fetchBoard();
+  }, [fetchBoard]);
 
   if (gameMode === 'defense') {
-    return <DefenseGame onBack={() => setGameMode('home')} onGameEnd={saveScore} />;
+    return <DefenseGame onBack={() => setGameMode('home')} onGameEnd={() => fetchBoard()} />;
   }
 
-  // ----- Leaderboard placeholder data (used until backend is wired up) -----
-  const placeholderLeaderboard: LeaderboardEntry[] = [
-    { name: 'rdmnad', score: 18450, date: '—' },
-    { name: 'Siggy.eth', score: 15220, date: '—' },
-    { name: 'Jez', score: 12080, date: '—' },
-    { name: 'Josh', score: 9990, date: '—' },
-    { name: 'You?', score: 0, date: '—' },
-  ];
-  const displayLeaderboard = leaderboard.length > 0 ? leaderboard : placeholderLeaderboard;
+  const entries = board?.entries ?? [];
+  const totalPlayers = board?.totalPlayers ?? 0;
+  const totalSubmissions = board?.totalSubmissions ?? 0;
+  const explorerBase = 'https://explorer.ritualfoundation.org';
 
   return (
     <div
@@ -239,6 +248,10 @@ export default function HomePage() {
                       </DialogHeader>
                       <div className="space-y-3 text-sm text-white/80">
                         <PatchItem
+                          title="On-chain leaderboard"
+                          body="Submit scores gaslessly. You sign, the deployer relays the tx and pays gas."
+                        />
+                        <PatchItem
                           title="Roster rename"
                           body="Defenders are now Siggy, Siggy Guardian, Jez, and Josh. Skins renamed to Stefan, Dunken, Flash, and Val Alexander."
                         />
@@ -250,10 +263,6 @@ export default function HomePage() {
                           title="Audio"
                           body="Default SFX volume reduced for a friendlier mix."
                         />
-                        <PatchItem
-                          title="UI"
-                          body="Brand new home page layout with leaderboard preview."
-                        />
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -262,7 +271,7 @@ export default function HomePage() {
             </div>
           </Card>
 
-          {/* Leaderboard panel (placeholder) */}
+          {/* Leaderboard panel — live from chain */}
           <Card className="border-white/10 bg-white/[0.04] backdrop-blur-xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -272,53 +281,97 @@ export default function HomePage() {
                     Leaderboard
                   </CardTitle>
                 </div>
-                <Badge
-                  variant="secondary"
-                  className="border border-amber-300/30 bg-amber-300/10 text-amber-200"
+                <button
+                  type="button"
+                  onClick={fetchBoard}
+                  disabled={boardLoading}
+                  className="inline-flex items-center gap-1 rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70 hover:bg-white/10 disabled:opacity-50"
+                  title="Refresh"
                 >
-                  Preview
-                </Badge>
+                  <RefreshCw className={`h-3 w-3 ${boardLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </button>
               </div>
               <CardDescription className="text-white/60">
-                Top defenders. Online ranking is coming soon — these are local placeholders.
+                Live from the Ritual Chain contract. Submissions are gasless.
               </CardDescription>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-white/55">
+                <span className="rounded-md bg-white/5 px-2 py-0.5 ring-1 ring-white/10">
+                  Players: <span className="font-mono text-white/85">{totalPlayers}</span>
+                </span>
+                <span className="rounded-md bg-white/5 px-2 py-0.5 ring-1 ring-white/10">
+                  Submissions: <span className="font-mono text-white/85">{totalSubmissions}</span>
+                </span>
+                {board?.contract && (
+                  <a
+                    href={`${explorerBase}/address/${board.contract}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-0.5 text-white/85 ring-1 ring-white/10 hover:bg-white/10"
+                  >
+                    Contract <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
+              </div>
             </CardHeader>
 
             <CardContent>
-              <ol className="divide-y divide-white/5 rounded-lg border border-white/10 bg-black/20">
-                {displayLeaderboard.slice(0, 5).map((entry, index) => (
-                  <li
-                    key={`${entry.name}-${index}`}
-                    className="flex items-center gap-3 px-3 py-2.5"
-                  >
-                    <span
-                      className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                        index === 0
-                          ? 'bg-amber-300/20 text-amber-200 ring-1 ring-amber-300/40'
-                          : index === 1
-                          ? 'bg-zinc-300/15 text-zinc-200 ring-1 ring-zinc-300/30'
-                          : index === 2
-                          ? 'bg-orange-400/15 text-orange-200 ring-1 ring-orange-400/30'
-                          : 'bg-white/5 text-white/60 ring-1 ring-white/10'
-                      }`}
+              {boardError ? (
+                <div className="rounded-lg border border-rose-400/25 bg-rose-500/10 p-3 text-sm text-rose-100">
+                  Failed to load leaderboard: {boardError}
+                </div>
+              ) : boardLoading && entries.length === 0 ? (
+                <div className="flex items-center justify-center py-10 text-white/50 text-sm">
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Loading…
+                </div>
+              ) : entries.length === 0 ? (
+                <div className="rounded-lg border border-white/10 bg-white/5 p-4 text-center text-sm text-white/60">
+                  No scores yet. Be the first to defend the Ritual.
+                </div>
+              ) : (
+                <ol className="divide-y divide-white/5 rounded-lg border border-white/10 bg-black/20">
+                  {entries.slice(0, 5).map((entry, index) => (
+                    <li
+                      key={entry.address}
+                      className="flex items-center gap-3 px-3 py-2.5"
                     >
-                      {index + 1}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-white">
-                        {entry.name}
-                      </p>
-                      <p className="text-[11px] text-white/50">{entry.date}</p>
-                    </div>
-                    <span className="text-sm font-mono tabular-nums text-white/80">
-                      {entry.score.toLocaleString()}
-                    </span>
-                  </li>
-                ))}
-              </ol>
+                      <span
+                        className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                          index === 0
+                            ? 'bg-amber-300/20 text-amber-200 ring-1 ring-amber-300/40'
+                            : index === 1
+                            ? 'bg-zinc-300/15 text-zinc-200 ring-1 ring-zinc-300/30'
+                            : index === 2
+                            ? 'bg-orange-400/15 text-orange-200 ring-1 ring-orange-400/30'
+                            : 'bg-white/5 text-white/60 ring-1 ring-white/10'
+                        }`}
+                      >
+                        {index + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <a
+                          href={`${explorerBase}/address/${entry.address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block truncate text-sm font-semibold text-white hover:text-indigo-200"
+                          title={entry.address}
+                        >
+                          {shortenAddress(entry.address)}
+                        </a>
+                        <p className="text-[11px] text-white/50">
+                          {entry.submissions} submission{entry.submissions === 1 ? '' : 's'}
+                        </p>
+                      </div>
+                      <span className="text-sm font-mono tabular-nums text-white/80">
+                        {entry.bestScore.toLocaleString()}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              )}
 
               <p className="mt-4 text-center text-xs text-white/40">
-                Online leaderboard coming in a future patch.
+                Players don't pay gas. The deployer relays each submission on-chain.
               </p>
             </CardContent>
           </Card>
