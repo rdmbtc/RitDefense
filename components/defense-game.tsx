@@ -75,6 +75,21 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
   // Submit-score modal state (game-over screen)
   const [submitOpen, setSubmitOpen] = useState(false);
   const [submitState, setSubmitState] = useState<{ score: number; isWin: boolean } | null>(null);
+
+  // Bridge: the in-Phaser "Submit Score" button dispatches this event so the
+  // React EIP-712 SubmitScoreModal opens with the correct score / outcome.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handler = (ev: Event) => {
+      const detail = (ev as CustomEvent<{ score?: number; isWin?: boolean }>).detail || {};
+      const score = typeof detail.score === 'number' ? detail.score : gameScore;
+      const isWin = !!detail.isWin;
+      setSubmitState({ score, isWin });
+      setSubmitOpen(true);
+    };
+    window.addEventListener('ritdefense:openSubmitModal', handler as EventListener);
+    return () => window.removeEventListener('ritdefense:openSubmitModal', handler as EventListener);
+  }, [gameScore]);
   
   // Use custom hooks for API integration
   const { connected: isConnected, address: walletAddress, connect } = useWallet();

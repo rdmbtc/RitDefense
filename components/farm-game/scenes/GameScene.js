@@ -5770,8 +5770,23 @@ if (isBrowser) {
                   duration: 80,
                   yoyo: true,
                   onComplete: () => {
-                    // Submit score via API and handle UI updates
-                    this.submitScore(finalScore, completedWaves, submitButton, submitText);
+                    // Bridge to the React EIP-712 SubmitScoreModal. The legacy
+                    // window.secureSubmitScore path is intentionally NOT used —
+                    // it returned synchronously without actually submitting and
+                    // produced a misleading "Score Submitted!" message.
+                    if (typeof window !== 'undefined') {
+                      try {
+                        window.dispatchEvent(new CustomEvent('ritdefense:openSubmitModal', {
+                          detail: { score: finalScore, isWin: !!victory },
+                        }));
+                      } catch (e) {
+                        console.error('Failed to dispatch openSubmitModal event:', e);
+                      }
+                    }
+                    // Visual hint that the modal is now in charge.
+                    if (submitText && typeof submitText.setText === 'function') {
+                      submitText.setText('Submit in window…');
+                    }
                   }
                 });
               });
