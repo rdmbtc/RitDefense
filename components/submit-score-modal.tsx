@@ -52,34 +52,71 @@ async function readNonce(player: Address): Promise<bigint> {
 async function ensureCorrectChain(): Promise<void> {
   const eth = (window as any).ethereum;
   if (!eth) throw new Error('No injected wallet found');
-  const currentChainHex: string = await eth.request({ method: 'eth_chainId' });
-  const currentChainId = parseInt(currentChainHex, 16);
-  if (currentChainId === RITUAL_CHAIN.id) return;
 
   const targetChainHex = `0x${RITUAL_CHAIN.id.toString(16)}`;
-  try {
-    await eth.request({
+
+  const readChainId = async (): Promise<number> => {
+    try {
+      const hex: string = await eth.request({ method: 'eth_chainId' });
+      return parseInt(hex, 16);
+    } catch {
+      return -1;
+    }
+  };
+
+  const isOnTarget = async () => (await readChainId()) === RITUAL_CHAIN.id;
+
+  if (await isOnTarget()) return;
+
+  const switchChain = () =>
+    eth.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: targetChainHex }],
     });
+
+  const addChain = () =>
+    eth.request({
+      method: 'wallet_addEthereumChain',
+      params: [
+        {
+          chainId: targetChainHex,
+          chainName: RITUAL_CHAIN.name,
+          nativeCurrency: RITUAL_CHAIN.nativeCurrency,
+          rpcUrls: RITUAL_CHAIN.rpcUrls.default.http,
+          blockExplorerUrls: ['https://explorer.ritualfoundation.org'],
+        },
+      ],
+    });
+
+  try {
+    await switchChain();
   } catch (err: any) {
-    if (err?.code === 4902 || /unrecognized chain/i.test(err?.message ?? '')) {
-      await eth.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: targetChainHex,
-            chainName: RITUAL_CHAIN.name,
-            nativeCurrency: RITUAL_CHAIN.nativeCurrency,
-            rpcUrls: RITUAL_CHAIN.rpcUrls.default.http,
-            blockExplorerUrls: ['https://explorer.ritualfoundation.org'],
-          },
-        ],
-      });
+    // 4902 / "unrecognized chain" → add the chain, then switch.
+    const msg: string = err?.message ?? '';
+    if (err?.code === 4902 || /unrecognized chain|chain.*not.*added/i.test(msg)) {
+      await addChain();
+      try {
+        await switchChain();
+      } catch {
+        /* some wallets auto-switch after add; ignore */
+      }
+    } else if (err?.code === 4001) {
+      // User rejected — surface a friendlier error.
+      throw new Error('Network switch was rejected. Please switch to Ritual Chain (1979) and try again.');
     } else {
       throw err;
     }
   }
+
+  // Wallets often resolve the switch promise before the provider's chainId is
+  // updated. Poll briefly so subsequent calls (signing, RPC) see the new chain.
+  const deadline = Date.now() + 5000;
+  while (Date.now() < deadline) {
+    if (await isOnTarget()) return;
+    await new Promise((r) => setTimeout(r, 150));
+  }
+  // If still not on target, continue anyway — the on-chain submitScore will
+  // verify the EIP-712 domain regardless of wallet UX state.
 }
 
 export function SubmitScoreModal({ open, onOpenChange, score, isWin, player, onConnect }: Props) {
