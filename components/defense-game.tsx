@@ -12,6 +12,10 @@ import { useCrossAppAccount } from '@/hooks/useCrossAppAccount';
 import { useUsername } from '@/hooks/useUsername';
 import { useOnchainScoreSubmissionWithRetry } from '@/hooks/useOnchainScoreSubmission';
 import { GAME_CONFIG } from '@/lib/game-config';
+import {
+  Sprout, Coins, Clock, RefreshCw, Keyboard, MousePointerClick,
+  Shield, Snowflake, Flame, Crown, Leaf, Info,
+} from 'lucide-react';
 
 
 
@@ -648,27 +652,75 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
       <div className="relative z-10 w-full max-w-[1400px] flex flex-col lg:flex-row gap-6 items-stretch justify-center h-full max-h-[90vh]">
         
         {/* Left Side: Farm Info Panel */}
-        <div className="hidden lg:flex flex-col w-64 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl overflow-y-auto">
-          <h3 className="text-xl font-bold text-green-400 mb-6 flex items-center gap-2 border-b border-white/10 pb-2">
-            🌾 Farm Area
-          </h3>
-          <div className="space-y-6 text-sm">
-            <div className="space-y-2">
-              <p className="text-white font-medium">Plant crops here to earn coins</p>
-              <ul className="space-y-3 text-white/70">
-                <li className="flex gap-2"><span>💰</span> <span>Each crop: 3 coins</span></li>
-                <li className="flex gap-2"><span>⏱️</span> <span>Crops grow over time</span></li>
-                <li className="flex gap-2"><span>🔄</span> <span>Harvest for profit</span></li>
-              </ul>
+        <div className="hidden lg:flex flex-col w-72 rounded-2xl border border-white/10 bg-gradient-to-b from-slate-950/80 to-slate-900/60 backdrop-blur-xl shadow-2xl overflow-hidden">
+          {/* Farm header */}
+          <div className="relative px-5 pt-5 pb-4 border-b border-white/5">
+            <div
+              className="absolute inset-0 opacity-40 pointer-events-none"
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle at 30% 0%, rgba(34,197,94,0.35), transparent 60%)',
+              }}
+            />
+            <div className="relative flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-emerald-400/30 bg-emerald-500/15 text-emerald-300">
+                <Sprout className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white leading-tight">Farm Area</h3>
+                <p className="text-[11px] text-emerald-200/80">Plant. Grow. Profit.</p>
+              </div>
             </div>
-            <div className="space-y-2 pt-6 border-t border-white/5">
-              <h4 className="text-xs font-bold text-white/40 uppercase tracking-widest">Controls</h4>
-              <ul className="space-y-3 text-xs text-white/80">
-                <li className="flex gap-2"><span>👆</span> <span>Click enemies to attack</span></li>
-                <li className="flex gap-2"><span>⌨️</span> <span><b>P</b> - Plant Mode</span></li>
-                <li className="flex gap-2"><span>⌨️</span> <span><b>1</b> - Siggy</span></li>
-                <li className="flex gap-2"><span>⌨️</span> <span><b>2</b> - Siggy Guardian</span></li>
-                <li className="flex gap-2"><span>⌨️</span> <span><b>3</b> - Jez</span></li>
+          </div>
+
+          {/* Scrollable body */}
+          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5 text-sm">
+            {/* Stat rows */}
+            <ul className="space-y-2">
+              <li className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.04] px-3 py-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-amber-400/15 text-amber-300">
+                  <Coins className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[11px] uppercase tracking-wider text-white/40">Reward</p>
+                  <p className="text-sm font-semibold text-white">3 coins / crop</p>
+                </div>
+              </li>
+              <li className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.04] px-3 py-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-sky-400/15 text-sky-300">
+                  <Clock className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[11px] uppercase tracking-wider text-white/40">Growth</p>
+                  <p className="text-sm font-semibold text-white">Crops mature over time</p>
+                </div>
+              </li>
+              <li className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.04] px-3 py-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-md bg-fuchsia-400/15 text-fuchsia-300">
+                  <RefreshCw className="h-4 w-4" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[11px] uppercase tracking-wider text-white/40">Loop</p>
+                  <p className="text-sm font-semibold text-white">Harvest, replant, repeat</p>
+                </div>
+              </li>
+            </ul>
+
+            {/* Controls section */}
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <Keyboard className="h-3.5 w-3.5 text-white/50" />
+                <h4 className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/50">
+                  Controls
+                </h4>
+                <div className="ml-auto h-px flex-1 bg-white/10" />
+              </div>
+              <ul className="space-y-1.5 text-xs text-white/85">
+                <ControlRow icon={<MousePointerClick className="h-3.5 w-3.5" />} label="Click enemies to attack" />
+                <ControlRow keyHint="P" label="Plant Mode" tone="emerald" />
+                <ControlRow keyHint="1" label="Siggy" tone="amber" />
+                <ControlRow keyHint="2" label="Siggy Guardian" tone="sky" />
+                <ControlRow keyHint="3" label="Jez" tone="rose" />
               </ul>
             </div>
           </div>
@@ -776,34 +828,211 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
         </div>
 
         {/* Right Side: Defenders Info Panel */}
-        <div className="hidden lg:flex flex-col w-80 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl overflow-y-auto">
-          <h3 className="text-xl font-bold text-blue-400 mb-6 flex items-center gap-2 border-b border-white/10 pb-2">
-            🛡️ Ritual Defenders
-          </h3>
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                <h5 className="text-xs font-bold text-yellow-500 uppercase mb-1">Siggy (25)</h5>
-                <p className="text-[11px] text-white/70 leading-relaxed">Basic nature magic. Reliable starting defense for the garden.</p>
+        <div className="hidden lg:flex flex-col w-80 rounded-2xl border border-white/10 bg-gradient-to-b from-slate-950/80 to-slate-900/60 backdrop-blur-xl shadow-2xl overflow-hidden">
+          {/* Defenders header */}
+          <div className="relative px-5 pt-5 pb-4 border-b border-white/5">
+            <div
+              className="absolute inset-0 opacity-40 pointer-events-none"
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle at 70% 0%, rgba(99,102,241,0.4), transparent 60%)',
+              }}
+            />
+            <div className="relative flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-indigo-400/30 bg-indigo-500/15 text-indigo-300">
+                <Shield className="h-5 w-5" />
               </div>
-              <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                <h5 className="text-xs font-bold text-blue-400 uppercase mb-1">Siggy Guardian (50)</h5>
-                <p className="text-[11px] text-white/70 leading-relaxed">Frost Guardian. Freezes and slows waves of approaching enemies.</p>
-              </div>
-              <div className="bg-white/5 rounded-xl p-3 border border-white/5">
-                <h5 className="text-xs font-bold text-red-500 uppercase mb-1">Jez (80)</h5>
-                <p className="text-[11px] text-white/70 leading-relaxed">Fire Mage. Delivers rapid fire magic damage to single targets.</p>
+              <div>
+                <h3 className="text-lg font-bold text-white leading-tight">Ritual Defenders</h3>
+                <p className="text-[11px] text-indigo-200/80">Place. Hold the line.</p>
               </div>
             </div>
-            
-            <div className="pt-6 mt-auto">
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-                <p className="text-[10px] text-blue-300 font-medium italic">"Place defenders on the right side to prevent enemies from crossing the border."</p>
+          </div>
+
+          {/* Scrollable cards */}
+          <div className="flex-1 overflow-y-auto px-5 py-4">
+            <div className="space-y-3">
+              <DefenderCard
+                name="Siggy"
+                cost={25}
+                role="Nature Mage"
+                description="Reliable starting defense. Steady damage with a healing aura."
+                icon={<Leaf className="h-4 w-4" />}
+                tone="emerald"
+              />
+              <DefenderCard
+                name="Siggy Guardian"
+                cost={50}
+                role="Frost Guardian"
+                description="Slows and freezes incoming waves. Great crowd control."
+                icon={<Snowflake className="h-4 w-4" />}
+                tone="sky"
+              />
+              <DefenderCard
+                name="Jez"
+                cost={80}
+                role="Fire Mage"
+                description="Rapid burst damage and burning trails for chokepoints."
+                icon={<Flame className="h-4 w-4" />}
+                tone="rose"
+              />
+              <DefenderCard
+                name="Josh"
+                cost={150}
+                role="Champion"
+                description="Premium divine magic with massive damage and reach."
+                icon={<Crown className="h-4 w-4" />}
+                tone="amber"
+                premium
+              />
+            </div>
+
+            {/* Tip / hint card */}
+            <div className="mt-4 rounded-xl border border-indigo-400/20 bg-indigo-500/10 p-3">
+              <div className="flex items-start gap-2">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-indigo-300" />
+                <p className="text-[11px] leading-relaxed text-indigo-100/85">
+                  Place defenders along the right border to stop enemies before they cross.
+                </p>
               </div>
             </div>
           </div>
         </div>
 
+      </div>
+    </div>
+  );
+}
+
+
+// -------------------- Side panel helpers --------------------
+
+type Tone = 'emerald' | 'amber' | 'sky' | 'rose' | 'indigo';
+
+const toneStyles: Record<
+  Tone,
+  { keyBg: string; keyText: string; ring: string; iconBg: string; iconText: string; cardRing: string; cardBg: string; }
+> = {
+  emerald: {
+    keyBg: 'bg-emerald-500/15',
+    keyText: 'text-emerald-200',
+    ring: 'ring-emerald-400/40',
+    iconBg: 'bg-emerald-500/15',
+    iconText: 'text-emerald-300',
+    cardRing: 'border-emerald-400/20',
+    cardBg: 'bg-emerald-500/5',
+  },
+  amber: {
+    keyBg: 'bg-amber-400/15',
+    keyText: 'text-amber-200',
+    ring: 'ring-amber-300/40',
+    iconBg: 'bg-amber-400/15',
+    iconText: 'text-amber-300',
+    cardRing: 'border-amber-300/25',
+    cardBg: 'bg-amber-400/5',
+  },
+  sky: {
+    keyBg: 'bg-sky-500/15',
+    keyText: 'text-sky-200',
+    ring: 'ring-sky-400/40',
+    iconBg: 'bg-sky-500/15',
+    iconText: 'text-sky-300',
+    cardRing: 'border-sky-400/25',
+    cardBg: 'bg-sky-500/5',
+  },
+  rose: {
+    keyBg: 'bg-rose-500/15',
+    keyText: 'text-rose-200',
+    ring: 'ring-rose-400/40',
+    iconBg: 'bg-rose-500/15',
+    iconText: 'text-rose-300',
+    cardRing: 'border-rose-400/25',
+    cardBg: 'bg-rose-500/5',
+  },
+  indigo: {
+    keyBg: 'bg-indigo-500/15',
+    keyText: 'text-indigo-200',
+    ring: 'ring-indigo-400/40',
+    iconBg: 'bg-indigo-500/15',
+    iconText: 'text-indigo-300',
+    cardRing: 'border-indigo-400/25',
+    cardBg: 'bg-indigo-500/5',
+  },
+};
+
+function ControlRow({
+  icon,
+  keyHint,
+  label,
+  tone = 'indigo',
+}: {
+  icon?: React.ReactNode;
+  keyHint?: string;
+  label: string;
+  tone?: Tone;
+}) {
+  const t = toneStyles[tone];
+  return (
+    <li className="flex items-center gap-2.5 rounded-lg border border-white/5 bg-white/[0.03] px-2.5 py-1.5">
+      {keyHint ? (
+        <kbd
+          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-mono text-[11px] font-bold ${t.keyBg} ${t.keyText} ring-1 ${t.ring}`}
+        >
+          {keyHint}
+        </kbd>
+      ) : (
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/5 text-white/70 ring-1 ring-white/10">
+          {icon}
+        </span>
+      )}
+      <span className="truncate">{label}</span>
+    </li>
+  );
+}
+
+function DefenderCard({
+  name,
+  cost,
+  role,
+  description,
+  icon,
+  tone,
+  premium = false,
+}: {
+  name: string;
+  cost: number;
+  role: string;
+  description: string;
+  icon: React.ReactNode;
+  tone: Tone;
+  premium?: boolean;
+}) {
+  const t = toneStyles[tone];
+  return (
+    <div
+      className={`group relative overflow-hidden rounded-xl border ${t.cardRing} ${t.cardBg} p-3 transition-colors hover:bg-white/[0.06]`}
+    >
+      {premium && (
+        <span className="absolute right-2 top-2 rounded-full border border-amber-300/40 bg-amber-300/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-amber-200">
+          Premium
+        </span>
+      )}
+      <div className="flex items-start gap-3">
+        <div
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${t.iconBg} ${t.iconText} ring-1 ${t.ring}`}
+        >
+          {icon}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h5 className="text-sm font-bold text-white">{name}</h5>
+            <span className="rounded-md bg-white/5 px-1.5 py-0.5 text-[10px] font-mono tabular-nums text-white/70 ring-1 ring-white/10">
+              {cost}🪙
+            </span>
+          </div>
+          <p className={`mt-0.5 text-[10px] uppercase tracking-wider ${t.iconText}`}>{role}</p>
+          <p className="mt-1.5 text-[11px] leading-relaxed text-white/70">{description}</p>
+        </div>
       </div>
     </div>
   );
