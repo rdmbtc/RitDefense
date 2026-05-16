@@ -1,16 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+// Returns a stable local CSRF token. The legacy upstream backend was
+// removed; the token is consumed only by the existing axios interceptor in
+// lib/api.ts and is no longer validated server-side. Returning 200 here keeps
+// the interceptor and react-query consumers happy (no retry loops).
 
 export async function GET() {
-  const targetUrl = 'https://inland-grete-mondefense-9eee18bb.koyeb.app/api/csrf-token';
+  return NextResponse.json({
+    csrfToken: 'local-noop',
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  });
+}
 
-  try {
-    const response = await fetch(targetUrl, {
-      method: 'GET',
-    });
-
-    const data = await response.json();
-    return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to proxy request' }, { status: 500 });
-  }
+export async function HEAD() {
+  return new NextResponse(null, { status: 200 });
 }

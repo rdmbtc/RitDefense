@@ -15,9 +15,7 @@ class CSRFManager {
   private expires: Date | null = null;
   private readonly baseUrl: string;
 
-  constructor(baseUrl: string = process.env.NODE_ENV === "production" 
-    ? process.env.NEXT_PUBLIC_API_URL || "https://inland-grete-mondefense-9eee18bb.koyeb.app/"
-    : process.env.NEXT_PUBLIC_DEV_API_URL || "http://localhost:3001") {
+  constructor(baseUrl: string = '/api/proxy') {
     this.baseUrl = baseUrl;
   }
 
@@ -165,12 +163,10 @@ class CSRFManager {
   }
 }
 
-// Create a singleton instance
-const csrfManager = new CSRFManager(
-  process.env.NODE_ENV === 'production' 
-    ? 'https://inland-grete-mondefense-9eee18bb.koyeb.app/api' 
-    : '/api'
-);
+// Create a singleton instance. The legacy Koyeb backend was removed; all
+// CSRF traffic now goes to our local Next.js /api/proxy/csrf-token route,
+// which returns a stable noop token.
+const csrfManager = new CSRFManager('/api/proxy');
 
 export { CSRFManager, csrfManager };
 export default csrfManager;

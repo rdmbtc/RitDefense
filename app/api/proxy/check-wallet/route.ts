@@ -1,21 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const targetUrl = 'https://inland-grete-mondefense-9eee18bb.koyeb.app/api/check-wallet';
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-  try {
-    const response = await fetch(targetUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+// Legacy username lookup. Backend is removed — return a UserData-shaped empty
+// payload so useUsername() resolves cleanly without retries.
 
-    const data = await response.json();
-    return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to proxy request' }, { status: 500 });
-  }
+export async function POST() {
+  return NextResponse.json({ hasUsername: false, user: null });
 }

@@ -1,21 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const targetUrl = 'https://inland-grete-mondefense-9eee18bb.koyeb.app/api/start-game-session';
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-  try {
-    const response = await fetch(targetUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+// Legacy "start session" endpoint. Returns a synthetic local session so
+// useGameSession resolves successfully. The on-chain leaderboard does not
+// require this token.
 
-    const data = await response.json();
-    return NextResponse.json(data);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to proxy request' }, { status: 500 });
-  }
+export async function POST() {
+  return NextResponse.json({
+    sessionToken: 'local-noop',
+    sessionId: `local-${Date.now()}`,
+  });
 }
