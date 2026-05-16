@@ -263,80 +263,88 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
     }
   }, [walletAddress, sessionToken, sessionId, gameSession.submitScore, isSubmitting]);
 
-
-
+  // Always-current ref for the latest handleScoreSubmission. Lets the effects
+  // below depend on stable values (e.g. gameMode) without rebuilding the
+  // window.secureSubmitScore bridge on every render. Without this, the bridge
+  // effect re-attached every render and the setState calls inside it caused
+  // React error #185 (Maximum update depth exceeded) in production.
+  const handleScoreSubmissionRef = useRef(handleScoreSubmission);
   useEffect(() => {
-    // Initialize game state for defense mode when game starts
-    if (gameMode === 'game') {
-      if (typeof window !== 'undefined') {
-        // Set up defense-specific global state
-        window._defenseMode = true;
-        window._farmMode = false;
-        
-        // Initialize skill tree manager
-        if (!window.skillTreeManager) {
-          const SkillTreeManager = require('./skill-tree/SkillTreeManager').default;
-          window.skillTreeManager = new SkillTreeManager();
-        }
-        skillTreeManagerRef.current = window.skillTreeManager;
-      }
-      
-      // Set game start time when switching to game mode
-      setGameStartTime(Date.now());
-      
-      // Reset submission state for new game
-      setHasSubmittedScore(false);
-      
-      // SECURE: Use custom events instead of global function
-      const handleScoreSubmissionEvent = async (event: Event) => {
-        const customEvent = event as CustomEvent;
-        const { score, transactionCount, gameStateHash } = customEvent.detail;
-        
-        try {
-          await handleScoreSubmission(score, transactionCount, gameStateHash);
-        } catch (error) {
-          console.error('Error in secure score submission:', error);
-        }
-      };
+    handleScoreSubmissionRef.current = handleScoreSubmission;
+  }, [handleScoreSubmission]);
 
-      // Add secure event listener
-      window.addEventListener('gameScoreSubmission', handleScoreSubmissionEvent);
-      
-      // Provide a secure submission method for the game engine
-      window.secureSubmitScore = (score: number, transactionCount: number, gameStateHash: string) => {
-        // Validate parameters
-        if (typeof score !== 'number' || score < 0 || score > 999999) {
-          console.warn('Invalid score parameter blocked');
-          return false;
-        }
-        
-        if (typeof transactionCount !== 'number' || transactionCount < 0 || transactionCount > 100) {
-          console.warn('Invalid transaction count parameter blocked');
-          return false;
-        }
+  // One-shot init when entering 'game' mode: set up window flags, skill tree
+  // manager, game start time, and reset the submission flag. Runs only when
+  // gameMode itself flips, NOT on every render.
+  useEffect(() => {
+    if (gameMode !== 'game') return;
+    if (typeof window === 'undefined') return;
 
-        // Dispatch secure event
-        const event = new CustomEvent('gameScoreSubmission', {
-          detail: { score, transactionCount, gameStateHash }
-        });
-        window.dispatchEvent(event);
-        return true;
-      };
-      
-      return () => {
-        // Clean up event listener and secure function
-        window.removeEventListener('gameScoreSubmission', handleScoreSubmissionEvent);
-        if (window.secureSubmitScore) {
-          delete window.secureSubmitScore;
-        }
-      };
+    window._defenseMode = true;
+    window._farmMode = false;
+
+    if (!window.skillTreeManager) {
+      const SkillTreeManager = require('./skill-tree/SkillTreeManager').default;
+      window.skillTreeManager = new SkillTreeManager();
     }
+    skillTreeManagerRef.current = window.skillTreeManager;
+
+    setGameStartTime(Date.now());
+    setHasSubmittedScore(false);
+  }, [gameMode]);
+
+  // Long-lived bridge: legacy in-game submit button dispatches a
+  // 'gameScoreSubmission' window event; we forward it to the latest
+  // handleScoreSubmission via the ref above. Mounted once per game session.
+  useEffect(() => {
+    if (gameMode !== 'game' || typeof window === 'undefined') return;
+
+    const onScoreEvent = async (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const { score, transactionCount, gameStateHash } = customEvent.detail || {};
+      try {
+        await handleScoreSubmissionRef.current?.(score, transactionCount, gameStateHash);
+      } catch (error) {
+        console.error('Error in secure score submission:', error);
+      }
+    };
+
+    window.addEventListener('gameScoreSubmission', onScoreEvent);
+
+    window.secureSubmitScore = (score: number, transactionCount: number, gameStateHash: string) => {
+      if (typeof score !== 'number' || score < 0 || score > 999999) {
+        console.warn('Invalid score parameter blocked');
+        return false;
+      }
+      if (typeof transactionCount !== 'number' || transactionCount < 0 || transactionCount > 100) {
+        console.warn('Invalid transaction count parameter blocked');
+        return false;
+      }
+      window.dispatchEvent(
+        new CustomEvent('gameScoreSubmission', {
+          detail: { score, transactionCount, gameStateHash },
+        }),
+      );
+      return true;
+    };
 
     return () => {
-      // Cleanup when component unmounts
+      window.removeEventListener('gameScoreSubmission', onScoreEvent);
+      if (window.secureSubmitScore) {
+        delete window.secureSubmitScore;
+      }
+    };
+  }, [gameMode]);
+
+  useEffect(() => {
+    // On unmount of <DefenseGame> only: tear down global flags, the Phaser
+    // game instance, and any pending audio. Empty deps array — this MUST be
+    // stable, otherwise we re-enter the same React #185 (infinite update)
+    // bug that this commit fixes.
+    return () => {
       if (typeof window !== 'undefined') {
         window._defenseMode = false;
-        
+
         // Clean up any running game instances
         if (window.game && window.game.destroy) {
           try {
@@ -352,46 +360,36 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
           delete window.secureSubmitScore;
         }
       }
-      
+
       // Clean up audio
       if (backgroundMusicRef.current) {
         try {
-          // Wait for any ongoing play promise to resolve first
           if (backgroundMusicPlayPromise.current) {
             backgroundMusicPlayPromise.current.catch(() => {}).then(() => {
-              if (backgroundMusicRef.current) {
-                backgroundMusicRef.current.pause();
-              }
+              if (backgroundMusicRef.current) backgroundMusicRef.current.pause();
               backgroundMusicPlayPromise.current = null;
             });
           } else {
             backgroundMusicRef.current.pause();
             backgroundMusicPlayPromise.current = null;
           }
-        } catch (e) {
-          // Ignore pause errors
-        }
+        } catch {}
       }
       if (soundEffectRef.current) {
         try {
-          // Wait for any ongoing play promise to resolve first
           if (soundEffectPlayPromise.current) {
             soundEffectPlayPromise.current.catch(() => {}).then(() => {
-              if (soundEffectRef.current) {
-                soundEffectRef.current.pause();
-              }
+              if (soundEffectRef.current) soundEffectRef.current.pause();
               soundEffectPlayPromise.current = null;
             });
           } else {
             soundEffectRef.current.pause();
             soundEffectPlayPromise.current = null;
           }
-        } catch (e) {
-          // Ignore pause errors
-        }
+        } catch {}
       }
     };
-  }, [gameMode, walletAddress, sessionToken, sessionId, hasSubmittedScore, isSubmitting, handleScoreSubmission]);
+  }, []);
 
 
 
@@ -410,6 +408,45 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
       sound: '/assets/sounds/game/plant.mp3'
     }
   ];
+
+  // Helper: tear down chapter audio and jump straight into the game.
+  // Used by the "Skip Chapter" button on both desktop and mobile. The
+  // wallet check is intentionally NOT here — players can skip the intro
+  // freely and connect their wallet only when they want to submit a score.
+  const skipToGame = () => {
+    const goToGame = () => {
+      setGameMode('game');
+      setGameStarted(true);
+    };
+
+    if (!backgroundMusicRef.current) {
+      goToGame();
+      return;
+    }
+
+    try {
+      const stopAndGo = () => {
+        try {
+          if (backgroundMusicRef.current) {
+            backgroundMusicRef.current.pause();
+            backgroundMusicRef.current.currentTime = 0;
+          }
+        } catch {
+          /* ignore */
+        }
+        backgroundMusicPlayPromise.current = null;
+        goToGame();
+      };
+
+      if (backgroundMusicPlayPromise.current) {
+        backgroundMusicPlayPromise.current.catch(() => {}).then(stopAndGo);
+      } else {
+        stopAndGo();
+      }
+    } catch {
+      goToGame();
+    }
+  };
 
   // Function to handle chapter slide progression
   const nextChapterSlide = async () => {
@@ -532,53 +569,32 @@ export default function DefenseGame({ onBack, onGameEnd }: DefenseGameProps) {
         </div>
 
         {/* Skip button and Audio Enable button */}
-        <div className="absolute top-4 md:top-8 left-4 md:left-8 z-10 flex flex-col gap-2">
-          <Button 
+        <div className="absolute top-4 md:top-8 left-4 md:left-8 z-20 flex flex-col gap-2">
+          <button
+            type="button"
+            aria-label="Skip Chapter"
             onClick={(e) => {
               e.stopPropagation();
-              
-              // Check authentication before skipping to game
-              if (!isConnected || !walletAddress) {
-                toast.error('Please connect your wallet to play!');
-                connect();
-                return;
-              }
-              
-              if (backgroundMusicRef.current) {
-                try {
-                  // Wait for any ongoing play promise to resolve first
-                  if (backgroundMusicPlayPromise.current) {
-                     backgroundMusicPlayPromise.current.catch(() => {}).then(() => {
-                       if (backgroundMusicRef.current) {
-                         backgroundMusicRef.current.pause();
-                         backgroundMusicRef.current.currentTime = 0;
-                       }
-                       backgroundMusicPlayPromise.current = null;
-                       setGameMode('game');
-                       setGameStarted(true);
-                     });
-                   } else {
-                     backgroundMusicRef.current.pause();
-                     backgroundMusicRef.current.currentTime = 0;
-                     backgroundMusicPlayPromise.current = null;
-                     setGameMode('game');
-                     setGameStarted(true);
-                   }
-                 } catch (e) {
-                   // Ignore pause errors
-                   setGameMode('game');
-                   setGameStarted(true);
-                 }
-               } else {
-                 setGameMode('game');
-                 setGameStarted(true);
-               }
+              e.preventDefault();
+              skipToGame();
             }}
-            variant="outline"
-            className="bg-black/70 backdrop-blur border-white/20 text-white hover:bg-white/20 text-xs md:text-sm px-2 md:px-4 py-1 md:py-2"
+            // Mirror onClick on touchEnd as well — iOS Safari occasionally
+            // swallows synthesized clicks on absolutely-positioned controls
+            // sitting over a parent that has its own onClick.
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              skipToGame();
+            }}
+            // Some Android Chrome builds need pointerup as the final fallback.
+            onPointerUp={(e) => {
+              e.stopPropagation();
+            }}
+            style={{ touchAction: 'manipulation' }}
+            className="inline-flex items-center justify-center rounded-lg border border-white/20 bg-black/70 px-4 py-2.5 text-sm font-medium text-white backdrop-blur transition-colors hover:bg-white/15 active:bg-white/25 md:min-h-0 min-h-[44px] min-w-[120px]"
           >
             Skip Chapter
-          </Button>
+          </button>
           
           {/* Audio Enable Button - only show when audio is blocked */}
           {audioBlocked && (
