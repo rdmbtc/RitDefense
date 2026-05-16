@@ -12,14 +12,16 @@ export default class SoundManager {
     this.soundsLoaded = false;
 
     // --- Volume Categories ---
+    // SFX defaults are kept low so audio doesn't overwhelm the player.
+    // Music stays a bit higher because it's looping ambience.
     this.volumes = {
-      music: 0.6, // Default music volume
-      ui: 0.3,    // Click, error
-      coin: 0.3,  // Coins
-      action: 0.4,// Plant, harvest, defense_placed
-      enemy: 0.3, // Hit, defeat, escaped
-      attack: 0.4,// Defense attacks, special attacks
-      event: 0.5  // Wave start/complete, victory/game_over
+      music: 0.5,  // Default music volume
+      ui: 0.15,    // Click, error
+      coin: 0.15,  // Coins
+      action: 0.2, // Plant, harvest, defense_placed
+      enemy: 0.15, // Hit, defeat, escaped
+      attack: 0.2, // Defense attacks, special attacks
+      event: 0.25  // Wave start/complete, victory/game_over
     };
     // --- End Volume Categories ---
   }

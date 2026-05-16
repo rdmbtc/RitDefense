@@ -4192,29 +4192,43 @@ if (isBrowser) {
           try {
             if (!this.skinCustomization) return;
             
-            // Get current state
-            const isVisible = this.skinCustomization.isVisible || false;
+            // Treat the defender-selection menu and the skin panel itself
+            // as parts of the same UI. If either is open, pressing the
+            // Skins button should close the open layer instead of stacking.
+            const skinPanelVisible = this.skinCustomization.isVisible || false;
+            const selectionMenuVisible = !!this.defenderSelectionContainer;
             
-            if (isVisible) {
-              // Hide the skin customization panel
+            if (skinPanelVisible) {
               this.skinCustomization.hide();
-            } else {
-              // Show the skin customization panel with defender selection
-              if (defenderType) {
-                this.skinCustomization.show(defenderType);
-              } else {
-                // Show defender selection menu first
-                this.showDefenderSelectionMenu();
-              }
+              console.log('Skin customization panel hidden');
+              return;
             }
             
-            console.log(`Skin customization panel ${isVisible ? 'hidden' : 'shown'}`);
+            if (selectionMenuVisible) {
+              this.hideDefenderSelectionMenu();
+              console.log('Defender selection menu hidden');
+              return;
+            }
+            
+            // Nothing open yet — show requested defender's panel directly,
+            // or open the defender picker first.
+            if (defenderType) {
+              this.skinCustomization.show(defenderType);
+            } else {
+              this.showDefenderSelectionMenu();
+            }
+            console.log('Skin customization panel shown');
           } catch (error) {
             console.error('Error toggling skin customization:', error);
           }
         }
         
         showDefenderSelectionMenu() {
+          // Prevent stacking duplicates if the menu is already open
+          if (this.defenderSelectionContainer) {
+            return;
+          }
+          
           const centerX = this.cameras.main.width / 2;
           const centerY = this.cameras.main.height / 2;
           
@@ -4222,12 +4236,14 @@ if (isBrowser) {
           this.defenderSelectionContainer = this.add.container(0, 0);
           this.defenderSelectionContainer.setDepth(9999);
           
-          // Background overlay
+          // Background overlay (clickable to dismiss)
           const overlay = this.add.rectangle(0, 0, 
             this.cameras.main.width, 
             this.cameras.main.height, 
             0x000000, 0.7);
           overlay.setOrigin(0, 0);
+          overlay.setInteractive({ useHandCursor: false });
+          overlay.on('pointerdown', () => this.hideDefenderSelectionMenu());
           this.defenderSelectionContainer.add(overlay);
           
           // Main panel
@@ -4235,6 +4251,8 @@ if (isBrowser) {
           const panelHeight = 350;
           const mainPanel = this.add.rectangle(centerX, centerY, panelWidth, panelHeight, 0x2a2a2a);
           mainPanel.setStrokeStyle(3, 0x4a4a4a);
+          // Capture clicks so they don't fall through to the overlay (which closes the menu)
+          mainPanel.setInteractive();
           this.defenderSelectionContainer.add(mainPanel);
           
           // Title

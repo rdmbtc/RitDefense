@@ -78,6 +78,13 @@ export default class SkinCustomization {
     }
     
     show(defenderType = 'chog') {
+        // Defensive cleanup: if a stale container exists from a previous
+        // open (e.g. interrupted scene transition), destroy it first to
+        // prevent UI duplication on screen.
+        if (this.container) {
+            try { this.container.destroy(); } catch (e) {}
+            this.container = null;
+        }
         if (this.isVisible) return;
         
         this.selectedDefenderType = defenderType;
@@ -87,11 +94,9 @@ export default class SkinCustomization {
     }
     
     hide() {
-        if (!this.isVisible) return;
-        
         this.isVisible = false;
         if (this.container) {
-            this.container.destroy();
+            try { this.container.destroy(); } catch (e) {}
             this.container = null;
         }
         this.skinPanels = [];
@@ -106,12 +111,14 @@ export default class SkinCustomization {
         this.container = this.scene.add.container(0, 0);
         this.container.setDepth(10000);
         
-        // Background overlay
+        // Background overlay (clickable to dismiss the panel)
         const overlay = this.scene.add.rectangle(0, 0, 
             this.scene.cameras.main.width, 
             this.scene.cameras.main.height, 
             0x000000, 0.7);
         overlay.setOrigin(0, 0);
+        overlay.setInteractive({ useHandCursor: false });
+        overlay.on('pointerdown', () => this.hide());
         this.container.add(overlay);
         
         // Main panel
@@ -119,6 +126,8 @@ export default class SkinCustomization {
         const panelHeight = 500;
         const mainPanel = this.scene.add.rectangle(centerX, centerY, panelWidth, panelHeight, 0x2a2a2a);
         mainPanel.setStrokeStyle(3, 0x4a4a4a);
+        // Capture clicks so they don't fall through to the overlay
+        mainPanel.setInteractive();
         this.container.add(mainPanel);
         
         // Title
